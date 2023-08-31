@@ -73,6 +73,9 @@ void eventHandler(SDL_Event* event)
 					{
 						if (isPieceTurn(active_piece) && active_piece->canMove(grid_x_pos, grid_y_pos))
 						{
+							board->setLastMove(active_piece->getX(), grid_x_pos,
+									active_piece->getY(), grid_y_pos, 
+									active_piece->getPieceType());
 							board->movePiece(active_piece, grid_x_pos, grid_y_pos);
 							active_piece = nullptr;
 							black_turn = !black_turn;
@@ -98,6 +101,9 @@ void eventHandler(SDL_Event* event)
 						{
 							if (active_piece->canMove(grid_x_pos, grid_y_pos))
 							{
+								board->setLastMove(active_piece->getX(), grid_x_pos,
+										active_piece->getY(), grid_y_pos, 
+										active_piece->getPieceType());
 								board->movePiece(active_piece, grid_x_pos, grid_y_pos);
 								active_piece = nullptr;
 								black_turn = !black_turn;
