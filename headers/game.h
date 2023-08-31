@@ -4,6 +4,7 @@
 class Piece;
 
 #include "view.h"
+#include "moves.h"
 #include <stdio.h>
 
 /**
@@ -21,6 +22,7 @@ class ChessBoard {
 		int m_board_size;
 		int m_grid_size;
 		float m_board_pad;
+		Move* m_last_move;
 		SDL_Texture* m_chess_board;
 
 
@@ -30,9 +32,11 @@ class ChessBoard {
 		void initBoard(void);
 		void drawBoard(void);
 		void highlightSquare(int, int);
-		void highlightRoute(int, int);
+		void highlightRoute(Piece*);
+		void highlightGrid(int, int);
 		void highlightCapture(int, int);
 		void movePiece(Piece*, int, int);
+		void setLastMove(int, int, int, int, PieceType);
 		int getBoardPad() const { return (m_board_pad); };
 		int getGridSize() const { return (m_grid_size); };
 		SDL_Texture* getChessBoard(void) const { return (m_chess_board); };
@@ -40,6 +44,7 @@ class ChessBoard {
 		Piece* trackDiagonal(Piece*, int, int);
 		Piece* trackStraight(Piece*, int, int);
 		Piece* routeBlocked(Piece*, int, int);
+		Move* getLastMove(void) const { return (m_last_move); };
 };
 
 void start(void);
