@@ -19,7 +19,7 @@ Pawn::Pawn(int x, int y, bool isBlack, SDL_Renderer* renderer,
 	}
 }
 
-bool Pawn::hasMoved(void)
+bool Pawn::hasMoved(void) const
 {
 	if (is_black)
 		return (y != 6);
@@ -50,7 +50,6 @@ bool Pawn::canMove(int x_dest, int y_dest)
 	if (abs(y - y_dest) == 1 && is_straight &&
 			m_board->getPiece(x_dest, y_dest) == nullptr)
 	{
-		// SDL_Log("Entered One-Square advance block\n");
 		return (true);
 	}
 
@@ -58,14 +57,12 @@ bool Pawn::canMove(int x_dest, int y_dest)
 	if(abs(y - y_dest) == 2 && is_straight && !hasMoved() &&
 			!m_board->routeBlocked(this, x_dest, y_dest))
 	{
-		// SDL_Log("Entered Two-Squre advance block\n");
 		return (true);
 	}
 
 	//Capture move on either forward diagonals
 	if(abs(x - x_dest) == 1 && abs(y - y_dest) == 1)
 	{
-		// SDL_Log("Entered diagional block\n");
 		Piece* diag_piece = m_board->getPiece(x_dest, y_dest);
 		if(diag_piece != nullptr) {
 			return (isWhite() && diag_piece->isBlack() ||
@@ -77,7 +74,6 @@ bool Pawn::canMove(int x_dest, int y_dest)
 	if(abs(x - x_dest) == 1 && ((y == 4 && y_dest == 5 && isWhite()) ||
 				(y == 3 && y_dest == 2 && isBlack())))
 	{
-		// SDL_Log("Entered En Passant block\n");
 		Piece* side_piece = m_board->getPiece(x_dest, y);
 		if(side_piece != nullptr) {
 			if((isWhite() && side_piece->isBlack()) &&
