@@ -43,16 +43,7 @@ void start(void)
 			SDL_Event event;
 
 			if (SDL_WaitEvent(&event))
-			{
 				eventHandler(&event);
-			/*	if (event.type == SDL_QUIT)
-					quit = true;
-				else if (event.type == SDL_MOUSEBUTTONDOWN)
-				{
-					
-				}
-				*/
-			}
 		}
 	}
 	wrapUp();
@@ -95,6 +86,7 @@ void eventHandler(SDL_Event* event)
 						{
 							active_piece = clicked_piece;
 							board->highlightSquare(grid_x_pos, grid_y_pos);
+							board->highlightRoute(active_piece);
 						}
 					} else 
 					{
