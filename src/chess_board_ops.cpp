@@ -37,9 +37,18 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
 	drawBoard();
 }
 
+/**
+ * trackDiagonal - Traverses diagonally (X motion i.e Bishop) to the specified
+ * destination in search of a piece along the path to the destination.
+ *
+ * @piece: Travelling piece
+ * @x_dest: x-axis destination
+ * @y_dest: y-axis destination
+ *
+ * Return: Obstructing piece or nullptr if no piece was along the path
+ */
 Piece* ChessBoard::trackDiagonal(Piece* piece, int x_dest, int y_dest)
 {
-	// Inspect here and then the movePiece function
 	Piece* blocker;
 	bool upper, left;
 	int x_r, y_r;
@@ -62,6 +71,16 @@ Piece* ChessBoard::trackDiagonal(Piece* piece, int x_dest, int y_dest)
 	return (blocker);
 }
 
+/**
+ * trackStraight - Traverses a straight path (Horizontally and Vertically e.g
+ * Rook) to detect obstructions along the path.
+ *
+ * @piece: Travelling piece
+ * @x_dest: x-axis destination
+ * @y_dest: y-axis destination
+ *
+ * Return: Obstructing piece or nullptr if no piece was along the path
+ */
 Piece* ChessBoard::trackStraight(Piece* piece, int x_dest, int y_dest)
 {
 	Piece* blocker;
@@ -111,6 +130,8 @@ Piece* ChessBoard::routeBlocked(Piece* piece, int x_dest, int y_dest)
 			Piece* piece1, *piece2;
 
 			piece1 = m_board[x_dest][y_dest];
+			// Using +1 and -1 cause depending on the side it moves
+			// forward or backward and we want the prior piece
 			piece2 = piece->isBlack() ? m_board[x_dest][y_dest + 1]
 				: m_board[x_dest][y_dest - 1];
 
@@ -135,6 +156,7 @@ Piece* ChessBoard::routeBlocked(Piece* piece, int x_dest, int y_dest)
 		case KING:
 			break;
 		default:
+			tmp = nullptr;
 			break;
 	}
 	return (tmp);
