@@ -1,9 +1,12 @@
-#ifndef PIECES_H_ : public Piece
+#ifndef PIECES_H_
 #define PIECES_H_
 
 #include "view.h"
 
-enum PieceType { KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN };
+enum PieceType
+{
+	KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, NONE
+};
 
 class ChessBoard;
 
@@ -14,7 +17,7 @@ class ChessBoard;
  * @x: x position of piece
  * @y: y position of piece
  * @pieceTexture: Texture representation of piece to be loaded from image
- * 
+ *
  * Description: Base class declaration for all pieces
  */
 class Piece {
@@ -79,15 +82,19 @@ class Bishop : public Piece {
 };
 
 class Knight : public Piece {
+	private:
+		bool m_has_moved;
 	public:
 		Knight(int, int, bool, SDL_Renderer*, ChessBoard*);
 		bool canMove(int, int) override;
+		void moved(void) { m_has_moved = true; };
+		bool hasMoved(void) const;
 };
 
 class Pawn : public Piece {
 	public:
 		Pawn(int, int, bool, SDL_Renderer*, ChessBoard*);
 		bool canMove(int, int) override;
-		bool hasMoved(void);
+		bool hasMoved(void) const;
 };
 #endif
