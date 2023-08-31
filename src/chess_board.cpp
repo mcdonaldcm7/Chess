@@ -26,6 +26,7 @@ ChessBoard::ChessBoard(SDL_Renderer* renderer, const int board_size)
 
 	// Obtain the size of each grid
 	m_grid_size = floor((board_size - m_board_pad * 2) / 8);
+	m_last_move = new Move();
 	initBoard();
 }
 
@@ -108,8 +109,8 @@ void ChessBoard::drawBoard(void)
 
 			if (m_board[x][y] == nullptr)
 				continue;
-			xpos = x * m_grid_size + m_board_pad + p_offset;
-			ypos = y * m_grid_size + m_board_pad + p_offset;
+			xpos = floor(x * m_grid_size + m_board_pad) + p_offset;
+			ypos = floor(y * m_grid_size + m_board_pad) + p_offset;
 			piece_square = {(int) xpos, (int) ypos,
 				m_grid_size - p_offset,
 				m_grid_size - p_offset };
@@ -121,33 +122,22 @@ void ChessBoard::drawBoard(void)
 	SDL_SetRenderTarget(m_renderer, nullptr);
 }
 
-void ChessBoard::highlightSquare(int x, int y)
+/**
+ * setLastMove - Sets m_last_move to the last move played
+ *
+ * @from_x: intial x position of piece before move
+ * @to_x: x position of piece after move
+ * @from_y: initial y position of piece before move
+ * @to_y: y position of piece after move
+ * @type: Type of piece that made the last move e.g PAWN
+ */
+void ChessBoard::setLastMove(int from_x, int to_x, int from_y, int to_y, PieceType type)
 {
-	SDL_Texture* h_texture;
-	SDL_Rect h_square;
-	float xpos, ypos;
-	int p_offset;
-
-	p_offset = 5;
-	xpos = x * m_grid_size + m_board_pad + p_offset;
-	ypos = y * m_grid_size + m_board_pad + p_offset;
-	if ((x + y) % 2 == 0)
-		h_texture = loadImage("assets/active_black_piece.png", m_renderer);
-	else
-		h_texture = loadImage("assets/active_white_piece.png", m_renderer);
-	if (h_texture == nullptr)
-	{
-		SDL_Log("Failed to load active_piece image!!!");
-		// Throw Exception
-		return;
-	}
-
-	h_square = {xpos, ypos, (m_grid_size - p_offset),
-		(m_grid_size - p_offset)};
-	SDL_SetRenderTarget(m_renderer, m_chess_board);
-	SDL_RenderCopy(m_renderer, h_texture, nullptr, &h_square);
-	SDL_RenderPresent(m_renderer);
-	SDL_SetRenderTarget(m_renderer, nullptr);
+	m_last_move->setFromX(from_x);
+	m_last_move->setToX(to_x);
+	m_last_move->setFromY(from_y);
+	m_last_move->setToY(to_y);
+	m_last_move->setPieceType(type);
 }
 
 ChessBoard::~ChessBoard()
@@ -161,5 +151,6 @@ ChessBoard::~ChessBoard()
 			delete (m_board[x][y]);
 		}
 	}
+	delete m_last_move;
 	SDL_DestroyTexture(m_chess_board);
 }
