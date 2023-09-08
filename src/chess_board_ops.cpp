@@ -37,6 +37,16 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
 	drawBoard();
 }
 
+/**
+ * trackDiagonal - Traverses each every grid diagonally leading to the
+ * specified x_dest and y_dest, only advancing if no piece was found in the way
+ *
+ * @piece: Travelling piece
+ * @x_dest: x destination of the travelling piece
+ * @y_dest: y destination of the travelling piece
+ *
+ * Return: Pointer to the piece found in a path of piece, Otherwise nullptr
+ */
 Piece* ChessBoard::trackDiagonal(Piece* piece, int x_dest, int y_dest)
 {
 	// Inspect here and then the movePiece function
@@ -62,6 +72,17 @@ Piece* ChessBoard::trackDiagonal(Piece* piece, int x_dest, int y_dest)
 	return (blocker);
 }
 
+/**
+ * trackStraight - Traverses each and every grid in a straight line leading to
+ * the specified x_dest and y_dest, only advancing if no piece was found in the
+ * way
+ *
+ * @piece: Travelling piece
+ * @x_dest: x destination of the travelling piece
+ * @y_dest: y destination of the travelling piece
+ *
+ * Return: Pointer to the piece found in a path of piece, Otherwise nullptr
+ */
 Piece* ChessBoard::trackStraight(Piece* piece, int x_dest, int y_dest)
 {
 	Piece* blocker;
@@ -98,6 +119,15 @@ Piece* ChessBoard::trackStraight(Piece* piece, int x_dest, int y_dest)
 	return (blocker);
 }
 
+/**
+ * routeBlocked - Checks if the path to a piece destination is blocked
+ *
+ * @piece: Travelling piece
+ * @x_dest: x destination of the travelling piece
+ * @y_dest: y destination of the travelling piece
+ *
+ * Return: Pointer to piece blocking the way or a nullptr if none
+ */
 Piece* ChessBoard::routeBlocked(Piece* piece, int x_dest, int y_dest)
 {
 	Piece* tmp;
