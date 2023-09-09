@@ -1,19 +1,35 @@
-# OBJS specifies which files to compile as part of the project
-OBJS = main.cpp src/game.cpp src/chess_board.cpp src/view_ops.cpp src/king.cpp src/queen.cpp src/rook.cpp src/bishop.cpp src/knight.cpp src/pawn.cpp src/piece.cpp src/chess_board_ops.cpp
+# Source directory
+SRC_DIR = src
 
-# CC specifies which compiler we're using
-CC = g++
+# OBJS specifies which source files to compile
+SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
+OBJS := $(SOURCES:.cpp=.o)
 
-# COMPILER_FLAGS specifies the additional compilation options we're using
-# add "-Wall -Werror -Wextra -pedantic" flag later
-COMPILER_FLAGS = -w -g
+# Compiler and flags
+CC := g++
+#CFLAGS = -Wall -Werror -Wextra -pedantic -g
+CFLAGS := -w
 
-# LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lSDL2 -lSDL2_image
+# Libraries to link
+LIBS := -lSDL2 -lSDL2_image
 
-# OBJ_NAME specifies the name of the executable
-OBJ_NAME = Chess
+# Executable name
+EXECUTABLE := Chess
 
-# This is the target that compiles our executable
-all: $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME) 
+# Build target
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJS) main.o
+	$(CC) $(OBJS) main.o $(LIBS) -o $@
+
+# Rule to compile source files to object files
+%.o: $(SRC_DIR)/%.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Rule to compile the main.cpp file
+main.o: main.cpp
+	$(CC) $(CFLAGS) -c main.cpp -o main.o
+
+# Clean target
+clean:
+	rm -f $(OBJS) main.o $(EXECUTABLE)
