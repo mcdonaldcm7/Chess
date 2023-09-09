@@ -37,6 +37,10 @@ class ChessBoard {
 		void highlightCapture(int, int);
 		void movePiece(Piece*, int, int);
 		void setLastMove(int, int, int, int, PieceType);
+		void highlightPawnRoutes(Piece*);
+		void highlightKnightRoutes(Piece*);
+		void highlightStraight(Piece*);
+		void highlightDiagonal(Piece*);
 		int getBoardPad() const { return (m_board_pad); };
 		int getGridSize() const { return (m_grid_size); };
 		SDL_Texture* getChessBoard(void) const { return (m_chess_board); };
