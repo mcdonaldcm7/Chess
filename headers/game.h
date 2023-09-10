@@ -6,6 +6,7 @@ class Piece;
 #include "view.h"
 #include "moves.h"
 #include <stdio.h>
+#include <vector>
 
 /**
  * ChessBoard - Groups the board and all methods required to run a chess
@@ -17,6 +18,8 @@ class Piece;
  */
 class ChessBoard {
 	private:
+		std::vector<Piece*> m_black_pieces;
+		std::vector<Piece*> m_white_pieces;
 		Piece* m_board[8][8];
 		SDL_Renderer* m_renderer;
 		int m_board_size;
