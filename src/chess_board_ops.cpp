@@ -32,6 +32,63 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
 		tmp = m_board[x][prevY];
 		m_board[x][prevY] = nullptr;
 	}
+
+	// Castling
+	if (piece->getPieceType() == KING)
+	{
+		bool right;
+
+		right = x > prevX;
+		if (abs(prevX - x) == 2)
+		{
+			Rook* r;
+			int rook_x;
+
+			rook_x = right ? x + 1 : x - 2;
+			r = dynamic_cast<Rook*>(m_board[rook_x][y]);
+			r->setX(right ? prevX + 1 : prevX - 1);
+			m_board[rook_x][y] = nullptr;
+			m_board[right ? prevX + 1 : prevX - 1][y] = r;
+		}
+	}
+
+	switch (piece->getPieceType())
+	{
+		case KING:
+			King* k;
+
+			k = dynamic_cast<King*>(piece);
+			k->moved();
+			break;
+		case ROOK:
+			Rook* r;
+
+			r = dynamic_cast<Rook*>(piece);
+			r->moved();
+			break;
+		default:
+			break;
+	}
+
+	if (tmp)
+	{
+		if (tmp->isBlack())
+		{
+			for (int i = 0; i < m_black_pieces.size(); i++)
+			{
+				if (tmp == m_black_pieces[i])
+					m_black_pieces.erase(m_black_pieces.begin() + i);
+			}
+		} else
+		{
+			for (int i = 0; i < m_white_pieces.size(); i++)
+			{
+				if (tmp == m_white_pieces[i])
+					m_white_pieces.erase(m_white_pieces.begin() + i);
+			}
+		}
+	}
+
 	if (tmp)
 		delete tmp;
 	drawBoard();
