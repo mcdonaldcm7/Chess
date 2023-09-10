@@ -82,13 +82,9 @@ class Bishop : public Piece {
 };
 
 class Knight : public Piece {
-	private:
-		bool m_has_moved;
 	public:
 		Knight(int, int, bool, SDL_Renderer*, ChessBoard*);
 		bool canMove(int, int) override;
-		void moved(void) { m_has_moved = true; };
-		bool hasMoved(void) const;
 };
 
 class Pawn : public Piece {
