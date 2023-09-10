@@ -54,6 +54,15 @@ void ChessBoard::initBoard(void)
 
 	m_board[3][0] = new Queen(3, 0, false, m_renderer, this);
 	m_board[4][0] = new King(4, 0, false, m_renderer, this);
+	
+	m_white_pieces.push_back(m_board[0][0]);
+	m_white_pieces.push_back(m_board[7][0]);
+	m_white_pieces.push_back(m_board[1][0]);
+	m_white_pieces.push_back(m_board[6][0]);
+	m_white_pieces.push_back(m_board[2][0]);
+	m_white_pieces.push_back(m_board[5][0]);
+	m_white_pieces.push_back(m_board[3][0]);
+	m_white_pieces.push_back(m_board[4][0]);
 
 	// Initialization of the black pieces in the board
 	m_board[0][7] = new Rook(0, 7, true, m_renderer, this);
@@ -68,11 +77,22 @@ void ChessBoard::initBoard(void)
 	m_board[3][7] = new Queen(3, 7, true, m_renderer, this);
 	m_board[4][7] = new King(4, 7, true, m_renderer, this);
 
+	m_black_pieces.push_back(m_board[0][7]);
+	m_black_pieces.push_back(m_board[7][7]);
+	m_black_pieces.push_back(m_board[1][7]);
+	m_black_pieces.push_back(m_board[6][7]);
+	m_black_pieces.push_back(m_board[2][7]);
+	m_black_pieces.push_back(m_board[5][7]);
+	m_black_pieces.push_back(m_board[3][7]);
+	m_black_pieces.push_back(m_board[4][7]);
+
 	// Loop to add pawns to the board
 	for (int i = 0; i < 8; i++)
 	{
 		m_board[i][1] = new Pawn(i, 1, false, m_renderer, this);
+		m_white_pieces.push_back(m_board[i][1]);
 		m_board[i][6] = new Pawn(i, 6, true, m_renderer, this);
+		m_black_pieces.push_back(m_board[i][6]);
 	}
 }
 
@@ -146,9 +166,11 @@ ChessBoard::~ChessBoard()
 	{
 		for (int y = 0; y < 8; y++)
 		{
-			if (m_board[x][y] == nullptr)
-				continue;
-			delete (m_board[x][y]);
+			if (m_board[x][y] != nullptr)
+			{
+				delete (m_board[x][y]);
+				m_board[x][y] = nullptr;
+			}
 		}
 	}
 	delete m_last_move;
