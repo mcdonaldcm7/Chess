@@ -8,7 +8,7 @@ OBJS := $(SOURCES:.cpp=.o)
 # Compiler and flags
 CC := g++
 #CFLAGS = -Wall -Werror -Wextra -pedantic -g
-CFLAGS := -w
+CFLAGS := -w -g
 
 # Libraries to link
 LIBS := -lSDL2 -lSDL2_image
