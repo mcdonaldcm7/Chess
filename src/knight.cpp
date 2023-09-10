@@ -29,9 +29,8 @@ bool Knight::canMove(int x_dest, int y_dest)
 	if ((abs(y_dest - y) == 2 && abs(x_dest - x) == 1) ||
 			abs(x_dest - x) == 2 && abs(y_dest - y) == 1)
 	{
-		if (tmp != nullptr && !isOpponent(tmp))
-			return (false);
-		return (true);
+		if (!tmp || (tmp && isOpponent(tmp)))
+			return (true);
 	}
 	return (false);
 }
