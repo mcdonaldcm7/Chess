@@ -18,7 +18,17 @@ Queen::Queen(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* boa
         }
 }
 
-bool Queen::canMove(int x_dest, int y_dest)
+/**
+ * canMove - Checks whether or not the queen is allowed to move to the grid
+ * specified by (x_dest, y_dest)
+ *
+ * @x_dest: x-axis destination
+ * @y_dest: y-axis destination
+ * @prot: Piece to ignore when performing checks
+ *
+ * Return: true if requested move is valid, false otherwise
+ */
+bool Queen::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 {
 	Piece *tmp;
 
@@ -31,7 +41,7 @@ bool Queen::canMove(int x_dest, int y_dest)
 		Piece* blocker;
 	       
 		blocker = m_board->routeBlocked(this, x_dest, y_dest);
-		if (!tmp || isOpponent(tmp))
+		if (!tmp || isOpponent(tmp) || (tmp == prot))
 		{
 			if (blocker)
 				return (false);
@@ -41,6 +51,15 @@ bool Queen::canMove(int x_dest, int y_dest)
 	return (false);
 }
 
+/**
+ * angle - Computes and returns the angle of the queen piece relative to the
+ * specified destination
+ *
+ * @x_dest: x-axis destination
+ * @y_dest: y-axis destination
+ *
+ * Return: Angle of the queen piece relative to the destination
+ */
 int Queen::angle(int x_dest, int y_dest)
 {
 	int x_delta, y_delta;
