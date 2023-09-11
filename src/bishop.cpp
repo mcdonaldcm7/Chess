@@ -60,14 +60,3 @@ int Bishop::angle(int x_dest, int y_dest)
 		180.0 / PI;
 	return ((int) a);
 }
-
-bool covered(void)
-{
-	std::vector<Pieces*> allies;
-
-	allies = isBlack() ? m_board->getBlackPieces() : m_board->getWhitePieces();
-	for (Piece* p : allies)
-		if (p->canMove(x, y, this))
-			return (true);
-	return (false);
-}
