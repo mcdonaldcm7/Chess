@@ -19,7 +19,17 @@ Bishop::Bishop(int x, int y, bool isBlack, SDL_Renderer* renderer,
 	}
 }
 
-bool Bishop::canMove(int x_dest, int y_dest)
+/**
+ * canMove - Checks if the bishop piece can move to the position specified by
+ * x_dest and y_dest
+ *
+ * @x_dest: x-axis destination
+ * @y_dest: y-axis destination
+ * @prot: Optional argument to help detect protected pieces
+ *
+ * Return: true if bishop can move to destination, Otherwise return false
+ */
+bool Bishop::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 {
 	Piece* tmp;
 
@@ -33,7 +43,7 @@ bool Bishop::canMove(int x_dest, int y_dest)
 
 		if (blocker)
 			return (false);
-		if (!tmp || isOpponent(tmp))
+		if (!tmp || isOpponent(tmp) || (tmp == prot))
 			return (true);
 	}
 	return (false);
@@ -49,4 +59,15 @@ int Bishop::angle(int x_dest, int y_dest)
 	a = atan2(static_cast<float>(y_delta), static_cast<float>(x_delta)) *
 		180.0 / PI;
 	return ((int) a);
+}
+
+bool covered(void)
+{
+	std::vector<Pieces*> allies;
+
+	allies = isBlack() ? m_board->getBlackPieces() : m_board->getWhitePieces();
+	for (Piece* p : allies)
+		if (p->canMove(x, y, this))
+			return (true);
+	return (false);
 }
