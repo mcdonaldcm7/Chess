@@ -1,5 +1,144 @@
 #include "../headers/game.h"
 
+void ChessBoard::highlightKingRoutes(Piece* p)
+{
+	Piece* tmp;
+	int x, y;
+
+	x = p->getX();
+	y = p->getY();
+
+	// Highlights the square just UP of the king
+	if (y <= 6)
+	{
+		tmp = m_board[x][y + 1];
+		if (isSafe(p, x, y + 1))
+		{
+			if (!tmp)
+				highlightGrid(x, y + 1);
+			else if (p->isOpponent(tmp) && !tmp->isCovered())
+				highlightCapture(x, y + 1);
+		}
+	}
+	
+	// Highlights the square just DOWN of the king
+	if (y >= 1)
+	{
+		tmp = m_board[x][y - 1];
+		if (isSafe(p, x, y - 1))
+		{
+			if (!tmp)
+				highlightGrid(x, y - 1);
+			else if (p->isOpponent(tmp) && !tmp->isCovered())
+				highlightCapture(x, y - 1);
+		}
+	}
+
+	// Highlights the RIGHT square of the king
+	if (x <= 6)
+	{
+		tmp = m_board[x + 1][y];
+		if (isSafe(p, x + 1, y))
+		{
+			if (!tmp)
+				highlightGrid(x + 1, y);
+			else if (p->isOpponent(tmp) && !tmp->isCovered())
+				highlightCapture(x + 1, y);
+		}
+	}
+	
+	// Highlights the LEFT square of the king
+	if (x >= 1)
+	{
+		tmp = m_board[x - 1][y];
+		if (isSafe(p, x - 1, y))
+		{
+			if (!tmp)
+				highlightGrid(x - 1, y);
+			else if (p->isOpponent(tmp) && !tmp->isCovered())
+				highlightCapture(x - 1, y);
+		}
+	}
+
+	// Highlights the UPPER-RIGHT grid of the king
+	if (y <= 6 && x <= 6)
+	{
+		tmp = m_board[x + 1][y + 1];
+		if (isSafe(p, x + 1, y + 1))
+		{
+			if (!tmp)
+				highlightGrid(x + 1, y + 1);
+			else if (p->isOpponent(tmp) && !tmp->isCovered())
+				highlightCapture(x + 1, y + 1);
+		}
+	}
+
+	// Highlights the LOWER-RIGHT grid of the king
+	if (y >= 1 && x <= 6)
+	{
+		tmp = m_board[x + 1][y - 1];
+		if (isSafe(p, x + 1, y - 1))
+		{
+			if (!tmp)
+				highlightGrid(x + 1, y - 1);
+			else if (p->isOpponent(tmp) && !tmp->isCovered())
+				highlightCapture(x + 1, y - 1);
+		}
+	}
+	
+	// Highlights the UPPER-LEFT grid of the king
+	if (y <= 6 && x >= 1)
+	{
+		tmp = m_board[x - 1][y + 1];
+		if (isSafe(p, x - 1, y + 1))
+		{
+			if (!tmp)
+				highlightGrid(x - 1, y + 1);
+			else if (p->isOpponent(tmp) && !tmp->isCovered())
+				highlightCapture(x - 1, y + 1);
+		}
+	}
+	
+	// Highlights the LOWER-LEFT grid of the king
+	if (y >= 1 && x >= 1)
+	{
+		tmp = m_board[x - 1][y - 1];
+		if (isSafe(p, x - 1, y - 1))
+		{
+			if (!tmp)
+				highlightGrid(x - 1, y - 1);
+			else if (p->isOpponent(tmp) && !tmp->isCovered())
+				highlightCapture(x - 1, y - 1);
+		}
+	}
+
+	// Castling
+	King* k;
+
+	k = dynamic_cast<King*>(p);
+	if (!k->hasMoved())
+	{
+		Piece* tmp2;
+		Rook* tmp_r;
+
+		tmp = m_board[7][y];
+		tmp2 = m_board[0][y];
+		if (!trackStraight(p, 7, y) && tmp->getPieceType() == ROOK)
+		{
+			tmp_r = dynamic_cast<Rook*>(tmp);
+			if (!tmp_r->hasMoved())
+				highlightCastling(6, y);
+		}
+		
+		if (!trackStraight(p, 0, y) && tmp2->getPieceType() == ROOK)
+		{
+			tmp_r = dynamic_cast<Rook*>(tmp2);
+			if (!tmp_r->hasMoved())
+				highlightCastling(2, y);
+		}
+	}
+}
+
 /**
  * highlightPawnRoutes - Renders the appropriate highlight for the selected
  * pawn piece
