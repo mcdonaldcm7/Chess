@@ -17,16 +17,22 @@ King::King(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* board
 	m_has_moved = false;
 }
 
-bool King::canMove(int x_dest, int y_dest)
+bool King::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 {
 	Piece* tmp;
 
 	tmp = m_board->getPiece(x_dest, y_dest);
 	if (abs(x - x_dest) <= 1 && abs(y - y_dest) <= 1)
 	{
-		// Check if piece is protected
-		if (!tmp || (tmp && isOpponent(tmp)))
-			return (true);
+		if (!tmp)
+		{
+			if (m_board->isSafe(this, x_dest, y_dest))
+				return (true);
+		} else
+		{
+			if ((isOpponent(tmp) && !tmp->isCovered()) || tmp == prot)
+				return (true);
+		}
 	}
 
 	// Castling
