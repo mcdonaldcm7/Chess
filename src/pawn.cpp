@@ -1,8 +1,6 @@
 #include "../headers/pieces.h"
 #include "../headers/game.h"
 
-extern int abs(int);
-
 Pawn::Pawn(int x, int y, bool isBlack, SDL_Renderer* renderer,
 		ChessBoard* board)
 	: Piece(x, y, isBlack, renderer, board)
@@ -19,6 +17,11 @@ Pawn::Pawn(int x, int y, bool isBlack, SDL_Renderer* renderer,
 	}
 }
 
+/**
+ * hasMoved - Checks whether or not the pawn has moved
+ *
+ * Return: true if piece has moved, false otherwise
+ */
 bool Pawn::hasMoved(void) const
 {
 	if (is_black)
@@ -26,7 +29,17 @@ bool Pawn::hasMoved(void) const
 	return (y != 1);
 }
 
-bool Pawn::canMove(int x_dest, int y_dest)
+/**
+ * canMove - Checks whether or not the pawn is allowed to move to the grid
+ * specified by (x_dest, y_dest)
+ *
+ * @x_dest: x-axis destination
+ * @y_dest: y-axis destination
+ * @prot: Piece to ignore when performing checks
+ *
+ * Return: true if requested move is valid, false otherwise
+ */
+bool Pawn::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 {
 	// Pawns can move up to two squares forward on their first move and
 	// only one square forward afterwards. They may also capture one square
@@ -64,9 +77,8 @@ bool Pawn::canMove(int x_dest, int y_dest)
 	if(abs(x - x_dest) == 1 && abs(y - y_dest) == 1)
 	{
 		Piece* diag_piece = m_board->getPiece(x_dest, y_dest);
-		if(diag_piece != nullptr) {
-			return (isWhite() && diag_piece->isBlack() ||
-					isBlack() && diag_piece->isWhite());
+		if (diag_piece != nullptr) {
+			return (isOpponent(diag_piece) || diag_piece == prot);
 		}
 	}
 
@@ -75,14 +87,8 @@ bool Pawn::canMove(int x_dest, int y_dest)
 				(y == 3 && y_dest == 2 && isBlack())))
 	{
 		Piece* side_piece = m_board->getPiece(x_dest, y);
-		if(side_piece != nullptr) {
-			if((isWhite() && side_piece->isBlack()) &&
-					side_piece->getPieceType() == PAWN)
-				return (true);
-			else if((isBlack() && side_piece->isWhite()) &&
-					side_piece->getPieceType() == PAWN)
-				return (true);
-		}
+		if(side_piece != nullptr)
+			return (isOpponent(side_piece) && side_piece->getPieceType() == PAWN);
 	}
 	return (false);
 }
