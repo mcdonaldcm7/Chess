@@ -2,6 +2,7 @@
 #define PIECES_H_
 
 #include "view.h"
+#include <iostream>
 
 enum PieceType
 {
@@ -32,14 +33,17 @@ class Piece {
 	public:
 		Piece(int, int, bool, SDL_Renderer*, ChessBoard*);
 		~Piece();
-		virtual bool canMove(int, int) = 0;
+		virtual bool canMove(int, int, Piece* p = nullptr) = 0;
 		int getX() const { return (x); };
 		int getY() const { return (y); };
 		void setX(int);
 		void setY(int);
+		// Debugging purposes
+		void printBoard(void);
 		bool isBlack(void) const { return (is_black); };
 		bool isWhite(void) const { return (!is_black); };
 		bool isOpponent(const Piece*) const;
+		bool isCovered(void);
 		bool operator==(const Piece*) const;
 		PieceType getPieceType(void) const { return (piece_type); };
 		SDL_Texture* getTexture(void) const { return (piece_texture); };
@@ -50,7 +54,7 @@ class King : public Piece {
 		bool m_has_moved;
 	public:
 		King(int, int, bool, SDL_Renderer*, ChessBoard*);
-		bool canMove(int, int) override;
+		bool canMove(int, int, Piece*) override;
 		void moved(void) { m_has_moved = true; };
 		bool hasMoved(void) const { return (m_has_moved); };
 };
@@ -60,7 +64,7 @@ class Queen : public Piece {
 		int angle(int, int);
 	public:
 		Queen(int, int, bool, SDL_Renderer*, ChessBoard*);
-		bool canMove(int, int) override;
+		bool canMove(int, int, Piece*) override;
 };
 
 class Rook : public Piece {
@@ -68,7 +72,7 @@ class Rook : public Piece {
 		bool m_has_moved;
 	public:
 		Rook(int, int, bool, SDL_Renderer*, ChessBoard*);
-		bool canMove(int, int) override;
+		bool canMove(int, int, Piece*) override;
 		void moved(void) { m_has_moved = true; };
 		bool hasMoved(void) const { return (m_has_moved); };
 };
@@ -78,19 +82,22 @@ class Bishop : public Piece {
 		int angle(int, int);
 	public:
 		Bishop(int, int, bool, SDL_Renderer*, ChessBoard*);
-		bool canMove(int, int) override;
+		bool canMove(int, int, Piece*) override;
 };
 
 class Knight : public Piece {
 	public:
 		Knight(int, int, bool, SDL_Renderer*, ChessBoard*);
-		bool canMove(int, int) override;
+		bool canMove(int, int, Piece*) override;
 };
 
 class Pawn : public Piece {
 	public:
 		Pawn(int, int, bool, SDL_Renderer*, ChessBoard*);
-		bool canMove(int, int) override;
+		bool canMove(int, int, Piece*) override;
 		bool hasMoved(void) const;
 };
+
+// Overload the << operator to print Piece objects
+std::ostream& operator<<(std::ostream&, const Piece&);
 #endif
