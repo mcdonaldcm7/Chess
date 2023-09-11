@@ -1,4 +1,5 @@
 #include "../headers/pieces.h"
+#include "../headers/game.h"
 
 /**
  * Piece - Initialized member variables of all Piece subclasses
@@ -68,6 +69,23 @@ bool Piece::isOpponent(const Piece* p) const
 			this->isWhite() && p->isWhite())
 		return (false);
 	return (true);
+}
+
+/**
+ * isCovered - Checks if a piece is protected i.e can any of it's allies move to
+ * the square it's occupying
+ *
+ * Return: true if piece is protected, false Otherwise
+ */
+bool Piece::isCovered(void)
+{
+	std::vector<Piece*> allies;
+
+	allies = isBlack() ? m_board->getBlackPieces() : m_board->getWhitePieces();
+	for (Piece* p : allies)
+		if (p->canMove(x, y, this))
+			return (true);
+	return (false);
 }
 
 /**
