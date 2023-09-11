@@ -17,7 +17,17 @@ Rook::Rook(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* board
 	m_has_moved = false;
 }
 
-bool Rook::canMove(int x_dest, int y_dest)
+/**
+ * canMove - Checks whether or not the rook is allowed to move to the grid
+ * specified by (x_dest, y_dest)
+ *
+ * @x_dest: x-axis destination
+ * @y_dest: y-axis destination
+ * @prot: Piece to ignore when performing checks
+ *
+ * Return: true if requested move is valid, false otherwise
+ */
+bool Rook::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 {
 	Piece* tmp;
 
@@ -27,42 +37,13 @@ bool Rook::canMove(int x_dest, int y_dest)
 	{
 		// Moving Vertically
 		// Consider case where piece is defending the king
-		if ((!tmp || isOpponent(tmp)))
+		if (!tmp || isOpponent(tmp) || (tmp == prot))
 		{
 			Piece* blocker;
 
 			blocker = m_board->routeBlocked(this, x_dest, y_dest);
 			if (blocker)
-			{
-				/*switch (blocker->getPieceType())
-				{
-					case ROOK:
-						SDL_Log("Blocked by a rook on gird x %d, y %d\n",
-								blocker->getX(), blocker->getY());
-						break;
-					case PAWN:
-						SDL_Log("Blocked by a pawn on grid x %d, y %d\n",
-								blocker->getX(), blocker->getY());
-						break;
-					case KNIGHT:
-						SDL_Log("Blocked by a knight on grid x %d, y %d\n",
-								blocker->getX(), blocker->getY());
-						break;
-					case BISHOP:
-						SDL_Log("Blocked by a bishop on grid x %d, y %d\n",
-								blocker->getX(), blocker->getY());
-						break;
-					case QUEEN:
-						SDL_Log("Blocked by a queen on grid x %d, y %d\n",
-								blocker->getX(), blocker->getY());
-						break;
-					case KING:
-						SDL_Log("Blocked by a king on grid x %d, y %d\n",
-								blocker->getX(), blocker->getY());
-						break;
-				}*/
 				return (false);
-			}
 			return (true);
 		}
 	}
