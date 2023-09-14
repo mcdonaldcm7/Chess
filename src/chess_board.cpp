@@ -2,24 +2,26 @@
 #include "../headers/pieces.h"
 #include <cmath>
 
-// Used to check how many times drawBoard was called per frame
-//static int counter = 0;
-
 ChessBoard::ChessBoard(SDL_Renderer* renderer, const int board_size)
 {
+	m_black_turn = false;
 	m_renderer = renderer;
 	if (!m_renderer)
 	{
 		printf("Invalid Renderer provided!");
 		// Throw Exception
 	}
+
 	m_chess_board = loadImage("assets/chess-board.png", m_renderer);
+
 	if (m_chess_board == nullptr)
 	{
 		printf("Failed to load Image!!!\n");
 		// Throw Exception
 	}
+
 	m_board_size = board_size;
+
 	// Border padding constitues roughly 3.125% (each side) of board image,
 	// Use simple calculation to remove it
 	m_board_pad = ceil (board_size * 3.125) / 100;
@@ -37,7 +39,7 @@ ChessBoard::ChessBoard(SDL_Renderer* renderer, const int board_size)
  */
 void ChessBoard::initBoard(void)
 {
-	// Initialize chess board to avoid accessing garbage values
+	// Initialize chess board to nullptr, for safety :)
 	for (int x = 0; x < 8; x++)
 		for (int y = 0; y < 8; y++)
 			m_board[x][y] = nullptr;
@@ -54,7 +56,10 @@ void ChessBoard::initBoard(void)
 
 	m_board[3][0] = new Queen(3, 0, false, m_renderer, this);
 	m_board[4][0] = new King(4, 0, false, m_renderer, this);
-	
+
+	// Keeping a reference to the white king to be used for checks
+	m_white_king = dynamic_cast<King*>(m_board[4][0]);
+
 	m_white_pieces.push_back(m_board[0][0]);
 	m_white_pieces.push_back(m_board[7][0]);
 	m_white_pieces.push_back(m_board[1][0]);
@@ -77,6 +82,9 @@ void ChessBoard::initBoard(void)
 	m_board[3][7] = new Queen(3, 7, true, m_renderer, this);
 	m_board[4][7] = new King(4, 7, true, m_renderer, this);
 
+	// Keeping a reference to the black king to be used for checks
+	m_black_king = dynamic_cast<King*>(m_board[4][7]);
+
 	m_black_pieces.push_back(m_board[0][7]);
 	m_black_pieces.push_back(m_board[7][7]);
 	m_black_pieces.push_back(m_board[1][7]);
@@ -91,6 +99,7 @@ void ChessBoard::initBoard(void)
 	{
 		m_board[i][1] = new Pawn(i, 1, false, m_renderer, this);
 		m_white_pieces.push_back(m_board[i][1]);
+
 		m_board[i][6] = new Pawn(i, 6, true, m_renderer, this);
 		m_black_pieces.push_back(m_board[i][6]);
 	}
@@ -110,16 +119,18 @@ void ChessBoard::drawBoard(void)
 
 	// Clear window renderer
 	SDL_RenderClear(m_renderer);
+
 	// Define the position and size the board should be drawn using a rectangle
-	const SDL_Rect fillRect = { 0, 0, m_board_size,
-		m_board_size };
+	const SDL_Rect fillRect = { 0, 0, m_board_size, m_board_size };
+
 	// Draws chess board onto the window so pieces can be drawn onto the board
-	SDL_RenderCopy(m_renderer, m_chess_board,
-			nullptr, &fillRect);
+	SDL_RenderCopy(m_renderer, m_chess_board, nullptr, &fillRect);
+
 	// SDL_RenderPresent(m_renderer); Uncomment this and board starts to flicker
 
 	// Set the render target to the chess board
 	SDL_SetRenderTarget(m_renderer, m_chess_board);
+
 	for (int x = 0; x < 8; x++)
 	{
 		for (int y = 0; y < 8; y++)
@@ -138,6 +149,7 @@ void ChessBoard::drawBoard(void)
 					NULL, &piece_square);
 		}
 	}
+
 	SDL_RenderPresent(m_renderer);
 	SDL_SetRenderTarget(m_renderer, nullptr);
 }
