@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*
+/**
  * init - Performs initialization operations for SDL and SDL_image
  *
  * Return: true if initialization was a success, Otherwise false
@@ -26,7 +26,7 @@ bool init(void)
 	return (true);
 }
 
-/*
+/**
  * createWindow - Creates and returns window based on the arguments passed
  *
  * @title: Title to intialize the window with
@@ -54,10 +54,11 @@ SDL_Window* createWindow(const char* title, int width, int height, int x,
 	return (window);
 }
 
-/*
+/**
  * loadImage - Loads and returns a texture from the specified image path
  *
  * @path: Path to the image
+ * @renderer: SDL_Renderer to render image
  *
  * Return: Pointer to a texture loaded from the image
  */
@@ -88,7 +89,7 @@ SDL_Texture* loadImage(const char* path, SDL_Renderer* renderer)
 	return (texture);
 }
 
-/*
+/**
  * createRenderer - Creates and returns an SDL_Renderer object from a window
  *
  * @window: Window where rendering is displayed
@@ -115,7 +116,7 @@ SDL_Renderer* createRenderer(SDL_Window* window, unsigned int flags)
 	return (renderer);
 }
 
-/*
+/**
  * wrapUp - Closes SDL and SDL_image
  *
  * Return: Nothing
