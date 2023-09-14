@@ -25,7 +25,7 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
 	piece->setY(y);
 	m_board[prevX][prevY] = nullptr;
 
-	// Handles peculiar like en-passant case where thee piece to capture
+	// Handles peculiar like en-passant case where the piece to capture
 	// isn't in the destination coordinate
 	if (piece->getPieceType() == PAWN && !tmp)
 	{
@@ -52,6 +52,7 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
 		}
 	}
 
+	// Calling the moved function if the piece was a King or Rook
 	switch (piece->getPieceType())
 	{
 		case KING:
@@ -77,20 +78,26 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
 			for (int i = 0; i < m_black_pieces.size(); i++)
 			{
 				if (tmp == m_black_pieces[i])
+				{
+					// std::cout << "Deleting " <<  *tmp << std::endl;
 					m_black_pieces.erase(m_black_pieces.begin() + i);
+				}
 			}
 		} else
 		{
 			for (int i = 0; i < m_white_pieces.size(); i++)
 			{
 				if (tmp == m_white_pieces[i])
+				{
+					// std::cout << "Deleting " << *tmp << std::endl;
 					m_white_pieces.erase(m_white_pieces.begin() + i);
+				}
 			}
 		}
+		
+		delete tmp;
 	}
 
-	if (tmp)
-		delete tmp;
 	drawBoard();
 }
 
@@ -106,7 +113,6 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
  */
 Piece* ChessBoard::trackDiagonal(Piece* piece, int x_dest, int y_dest)
 {
-	// Inspect here and then the movePiece function
 	Piece* blocker;
 	bool upper, left;
 	int x_r, y_r;
@@ -225,4 +231,16 @@ Piece* ChessBoard::routeBlocked(Piece* piece, int x_dest, int y_dest)
 			break;
 	}
 	return (tmp);
+}
+
+/**
+ * isPieceTurn - Returns whether or not it's a piece's turn
+ *
+ * @piece: Piece to check
+ *
+ * Return: true if piece is black and it's black turn and vice versa
+ */
+bool ChessBoard::isPieceTurn(const Piece* piece)
+{
+	return ((piece->isBlack() && m_black_turn) || (piece->isWhite() && !m_black_turn));
 }
