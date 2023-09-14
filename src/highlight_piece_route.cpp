@@ -15,12 +15,12 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		if (isSafe(p, x, y + 1))
 		{
 			if (!tmp)
-				highlightGrid(x, y + 1);
+				highlight(x, y + 1, MOVE);
 			else if (p->isOpponent(tmp) && !tmp->isCovered())
-				highlightCapture(x, y + 1);
+				highlight(x, y + 1, CAPTURE);
 		}
 	}
-	
+
 	// Highlights the square just DOWN of the king
 	if (y >= 1)
 	{
@@ -28,9 +28,9 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		if (isSafe(p, x, y - 1))
 		{
 			if (!tmp)
-				highlightGrid(x, y - 1);
+				highlight(x, y - 1, MOVE);
 			else if (p->isOpponent(tmp) && !tmp->isCovered())
-				highlightCapture(x, y - 1);
+				highlight(x, y - 1, CAPTURE);
 		}
 	}
 
@@ -41,12 +41,12 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		if (isSafe(p, x + 1, y))
 		{
 			if (!tmp)
-				highlightGrid(x + 1, y);
+				highlight(x + 1, y, MOVE);
 			else if (p->isOpponent(tmp) && !tmp->isCovered())
-				highlightCapture(x + 1, y);
+				highlight(x + 1, y, CAPTURE);
 		}
 	}
-	
+
 	// Highlights the LEFT square of the king
 	if (x >= 1)
 	{
@@ -54,9 +54,9 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		if (isSafe(p, x - 1, y))
 		{
 			if (!tmp)
-				highlightGrid(x - 1, y);
+				highlight(x - 1, y, MOVE);
 			else if (p->isOpponent(tmp) && !tmp->isCovered())
-				highlightCapture(x - 1, y);
+				highlight(x - 1, y, CAPTURE);
 		}
 	}
 
@@ -67,9 +67,9 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		if (isSafe(p, x + 1, y + 1))
 		{
 			if (!tmp)
-				highlightGrid(x + 1, y + 1);
+				highlight(x + 1, y + 1, MOVE);
 			else if (p->isOpponent(tmp) && !tmp->isCovered())
-				highlightCapture(x + 1, y + 1);
+				highlight(x + 1, y + 1, CAPTURE);
 		}
 	}
 
@@ -80,12 +80,12 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		if (isSafe(p, x + 1, y - 1))
 		{
 			if (!tmp)
-				highlightGrid(x + 1, y - 1);
+				highlight(x + 1, y - 1, MOVE);
 			else if (p->isOpponent(tmp) && !tmp->isCovered())
-				highlightCapture(x + 1, y - 1);
+				highlight(x + 1, y - 1, CAPTURE);
 		}
 	}
-	
+
 	// Highlights the UPPER-LEFT grid of the king
 	if (y <= 6 && x >= 1)
 	{
@@ -93,12 +93,12 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		if (isSafe(p, x - 1, y + 1))
 		{
 			if (!tmp)
-				highlightGrid(x - 1, y + 1);
+				highlight(x - 1, y + 1, MOVE);
 			else if (p->isOpponent(tmp) && !tmp->isCovered())
-				highlightCapture(x - 1, y + 1);
+				highlight(x - 1, y + 1, CAPTURE);
 		}
 	}
-	
+
 	// Highlights the LOWER-LEFT grid of the king
 	if (y >= 1 && x >= 1)
 	{
@@ -106,9 +106,9 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		if (isSafe(p, x - 1, y - 1))
 		{
 			if (!tmp)
-				highlightGrid(x - 1, y - 1);
+				highlight(x - 1, y - 1, MOVE);
 			else if (p->isOpponent(tmp) && !tmp->isCovered())
-				highlightCapture(x - 1, y - 1);
+				highlight(x - 1, y - 1, CAPTURE);
 		}
 	}
 
@@ -127,14 +127,14 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		{
 			tmp_r = dynamic_cast<Rook*>(tmp);
 			if (!tmp_r->hasMoved())
-				highlightCastling(6, y);
+				highlight(6, y, CASTLING);
 		}
-		
+
 		if (!trackStraight(p, 0, y) && tmp2->getPieceType() == ROOK)
 		{
 			tmp_r = dynamic_cast<Rook*>(tmp2);
 			if (!tmp_r->hasMoved())
-				highlightCastling(2, y);
+				highlight(2, y, CASTLING);
 		}
 	}
 }
@@ -172,14 +172,14 @@ void ChessBoard::highlightPawnRoutes(Piece* p)
 	if (!tmp_piece2)
 	{
 		if (piece->isBlack())
-			highlightGrid(x, y - 1);
+			highlight(x, y - 1, MOVE);
 		else
-			highlightGrid(x, y + 1);
+			highlight(x, y + 1, MOVE);
 		if (!piece->hasMoved() && !tmp_piece1)
 			if (piece->isBlack())
-				highlightGrid(x, y - 2);
+				highlight(x, y - 2, MOVE);
 			else
-				highlightGrid(x, y + 2);
+				highlight(x, y + 2, MOVE);
 	}
 
 	if (piece->isBlack())
@@ -195,9 +195,9 @@ void ChessBoard::highlightPawnRoutes(Piece* p)
 	}
 
 	if (tmp_piece1 && piece->isOpponent(tmp_piece1))
-		highlightCapture(tmp_piece1->getX(), tmp_piece1->getY());
+		highlight(tmp_piece1->getX(), tmp_piece1->getY(), CAPTURE);
 	if (tmp_piece2 && piece->isOpponent(tmp_piece2))
-		highlightCapture(tmp_piece2->getX(), tmp_piece2->getY());
+		highlight(tmp_piece2->getX(), tmp_piece2->getY(), CAPTURE);
 
 	// En passant
 	if (y == 4 && piece->isWhite() || y == 3 && piece->isBlack())
@@ -212,7 +212,7 @@ void ChessBoard::highlightPawnRoutes(Piece* p)
 				x_capt = m_last_move->fromX();
 				y_capt = piece->isBlack() ? m_last_move->toY() - 1
 					: m_last_move->toY() + 1;
-				highlightCapture(x_capt, y_capt);
+				highlight(x_capt, y_capt, CAPTURE);
 			}
 		}
 	}
@@ -241,9 +241,9 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		if (piece)
 		{
 			if (p->isOpponent(piece))
-				highlightCapture(x + 1, y + 2);
+				highlight(x + 1, y + 2, CAPTURE);
 		} else
-			highlightGrid(x + 1, y + 2);
+			highlight(x + 1, y + 2, MOVE);
 	}
 
 	// Highlights Top-Left square
@@ -255,9 +255,9 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		if (piece)
 		{
 			if (p->isOpponent(piece))
-				highlightCapture(x - 1, y + 2);
+				highlight(x - 1, y + 2, CAPTURE);
 		} else
-			highlightGrid(x - 1, y + 2);
+			highlight(x - 1, y + 2, MOVE);
 	}
 
 	// Highlights Bottom-Right square
@@ -269,9 +269,9 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		if (piece)
 		{
 			if (p->isOpponent(piece))
-				highlightCapture(x + 1, y - 2);
+				highlight(x + 1, y - 2, CAPTURE);
 		} else
-			highlightGrid(x + 1, y - 2);
+			highlight(x + 1, y - 2, MOVE);
 	}
 
 	// Highlights Bottom-Left square
@@ -283,9 +283,9 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		if (piece)
 		{
 			if (p->isOpponent(piece))
-				highlightCapture(x - 1, y - 2);
+				highlight(x - 1, y - 2, CAPTURE);
 		} else
-			highlightGrid(x - 1, y - 2);
+			highlight(x - 1, y - 2, MOVE);
 	}
 
 	// Highlights Right-Top square
@@ -297,9 +297,9 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		if (piece)
 		{
 			if (p->isOpponent(piece))
-				highlightCapture(x + 2, y + 1);
+				highlight(x + 2, y + 1, CAPTURE);
 		} else
-			highlightGrid(x + 2, y + 1);
+			highlight(x + 2, y + 1, MOVE);
 	}
 
 	// Highlights Right-Bottom square
@@ -311,9 +311,9 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		if (piece)
 		{
 			if (p->isOpponent(piece))
-				highlightCapture(x + 2, y - 1);
+				highlight(x + 2, y - 1, CAPTURE);
 		} else
-			highlightGrid(x + 2, y - 1);
+			highlight(x + 2, y - 1, MOVE);
 	}
 
 	// Highlights Left-Top square
@@ -325,9 +325,9 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		if (piece)
 		{
 			if (p->isOpponent(piece))
-				highlightCapture(x - 2, y + 1);
+				highlight(x - 2, y + 1, CAPTURE);
 		} else
-			highlightGrid(x - 2, y + 1);
+			highlight(x - 2, y + 1, MOVE);
 	}
 
 	// Highlights Left-Bottom square
@@ -339,9 +339,9 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		if (piece)
 		{
 			if (p->isOpponent(piece))
-				highlightCapture(x - 2, y - 1);
+				highlight(x - 2, y - 1, CAPTURE);
 		} else
-			highlightGrid(x - 2, y - 1);
+			highlight(x - 2, y - 1, MOVE);
 	}
 }
 
@@ -372,11 +372,11 @@ void ChessBoard::highlightStraight(Piece *p)
 		{
 			tmp = m_board[x][y + y_adv];
 			if (!tmp)
-				highlightGrid(x, y + y_adv);
+				highlight(x, y + y_adv, MOVE);
 			else
 			{
 				if (p->isOpponent(tmp))
-					highlightCapture(x, y + y_adv);
+					highlight(x, y + y_adv, CAPTURE);
 				upper_blk = true;
 			}
 		}
@@ -385,11 +385,11 @@ void ChessBoard::highlightStraight(Piece *p)
 		{
 			tmp = m_board[x][y - y_adv];
 			if (!tmp)
-				highlightGrid(x, y - y_adv);
+				highlight(x, y - y_adv, MOVE);
 			else
 			{
 				if (p->isOpponent(tmp))
-					highlightCapture(x, y - y_adv);
+					highlight(x, y - y_adv, CAPTURE);
 				lower_blk = true;
 			}
 		}
@@ -398,11 +398,11 @@ void ChessBoard::highlightStraight(Piece *p)
 		{
 			tmp = m_board[x + x_adv][y];
 			if (!tmp)
-				highlightGrid(x + x_adv, y);
+				highlight(x + x_adv, y, MOVE);
 			else
 			{
 				if (p->isOpponent(tmp))
-					highlightCapture(x + x_adv, y);
+					highlight(x + x_adv, y, CAPTURE);
 				right_blk = true;
 			}
 		}
@@ -411,11 +411,11 @@ void ChessBoard::highlightStraight(Piece *p)
 		{
 			tmp = m_board[x - x_adv][y];
 			if (!tmp)
-				highlightGrid(x - x_adv, y);
+				highlight(x - x_adv, y, MOVE);
 			else
 			{
 				if (p->isOpponent(tmp))
-					highlightCapture(x - x_adv, y);
+					highlight(x - x_adv, y, CAPTURE);
 				left_blk = true;
 			}
 		}
@@ -451,11 +451,11 @@ void ChessBoard::highlightDiagonal(Piece* p)
 			{
 				tmp = m_board[x + x_adv][y + y_adv];
 				if (!tmp)
-					highlightGrid(x + x_adv, y + y_adv);
+					highlight(x + x_adv, y + y_adv, MOVE);
 				else
 				{
 					if (p->isOpponent(tmp))
-						highlightCapture(x + x_adv, y + y_adv);
+						highlight(x + x_adv, y + y_adv, CAPTURE);
 					ur_blocked = true;
 				}
 			}
@@ -464,11 +464,11 @@ void ChessBoard::highlightDiagonal(Piece* p)
 			{
 				tmp = m_board[x + x_adv][y - y_adv];
 				if (!tmp)
-					highlightGrid(x + x_adv, y - y_adv);
+					highlight(x + x_adv, y - y_adv, MOVE);
 				else
 				{
 					if (p->isOpponent(tmp))
-						highlightCapture(x + x_adv, y - y_adv);
+						highlight(x + x_adv, y - y_adv, CAPTURE);
 					lr_blocked = true;
 				}
 			}
@@ -480,11 +480,11 @@ void ChessBoard::highlightDiagonal(Piece* p)
 			{
 				tmp = m_board[x - x_adv][y + y_adv];
 				if (!tmp)
-					highlightGrid(x - x_adv, y + y_adv);
+					highlight(x - x_adv, y + y_adv, MOVE);
 				else
 				{
 					if (p->isOpponent(tmp))
-						highlightCapture(x - x_adv, y + y_adv);
+						highlight(x - x_adv, y + y_adv, CAPTURE);
 					ul_blocked = true;
 				}
 			}
@@ -493,11 +493,11 @@ void ChessBoard::highlightDiagonal(Piece* p)
 			{
 				tmp = m_board[x - x_adv][y - y_adv];
 				if (!tmp)
-					highlightGrid(x - x_adv, y - y_adv);
+					highlight(x - x_adv, y - y_adv, MOVE);
 				else
 				{
 					if (p->isOpponent(tmp))
-						highlightCapture(x - x_adv, y - y_adv);
+						highlight(x - x_adv, y - y_adv, CAPTURE);
 					ll_blocked = true;
 				}
 			}
