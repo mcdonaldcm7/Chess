@@ -4,11 +4,11 @@
 /**
  * Piece - Initialized member variables of all Piece subclasses
  *
- * @renderer: Renderer for object to use to render itself
  * @x: Initial x position of the object
  * @y: Initial y position of the object
  * @isBlack: Is piece black or white
- * @piece_type: Used to set the piece type based on the PieceType enum
+ * @renderer: Renderer for object to use to render itself
+ * @board: Chess board the piece belongs to
  *
  * Return: Nothing
  */
@@ -23,6 +23,8 @@ Piece::Piece(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* boa
 /**
  * setX - Sets the x position of the piece
  *
+ * @x: x-axis position to set piece's x to
+ *
  * Return: Nothing
  */
 void Piece::setX(int x)
@@ -32,6 +34,8 @@ void Piece::setX(int x)
 
 /**
  * setY - Sets the y position of the piece
+ *
+ * @y: y-axis position to set piece's y to
  *
  * Return: Nothing
  */
@@ -55,44 +59,6 @@ bool Piece::operator==(const Piece* piece) const
 			piece_type == piece->getPieceType());
 }
 
-/**
- * isOpponent - Checks if a piece belongs to your opponent
- *
- * @p: Pointer to piece to compare color
- *
- * Return: true if piece pointed to the this keyword and p are of the same
- * color, false Otherwise
- */
-bool Piece::isOpponent(const Piece* p) const
-{
-	if (this->isBlack() && p->isBlack() ||
-			this->isWhite() && p->isWhite())
-		return (false);
-	return (true);
-}
-
-/**
- * isCovered - Checks if a piece is protected i.e can any of it's allies move to
- * the square it's occupying
- *
- * Return: true if piece is protected, false Otherwise
- */
-bool Piece::isCovered(void)
-{
-	std::vector<Piece*> allies;
-
-	allies = isBlack() ? m_board->getBlackPieces() : m_board->getWhitePieces();
-	for (Piece* p : allies)
-		if (p->canMove(x, y, this))
-			return (true);
-	return (false);
-}
-
-/**
- * ~Piece - Handles releasing of resources when the object gets destroyed
- *
- * Return: Nothing
- */
 Piece::~Piece(void)
 {
 	SDL_DestroyTexture(piece_texture);
