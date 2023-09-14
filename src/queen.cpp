@@ -43,7 +43,7 @@ bool Queen::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 		blocker = m_board->routeBlocked(this, x_dest, y_dest);
 		if (!tmp || isOpponent(tmp) || (tmp == prot))
 		{
-			if (blocker)
+			if (blocker && (blocker != prot))
 				return (false);
 			return (true);
 		}
