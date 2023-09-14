@@ -24,7 +24,7 @@ Knight::Knight(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* b
  *
  * @x_dest: x-axis destination
  * @y_dest: y_axis destonation
- * @prot: Piece to ignore when checking for valid moves
+ * @nullptr: Piece to ignore when checking for valid moves
  *
  * Return: true if a valid move was requested, false otherwise
  */
