@@ -55,7 +55,7 @@ bool ChessBoard::isSafe(Piece* piece, int x_scout, int y_scout)
 
 			if (abs(x_scout - p->getX()) <= 1 && abs(y_scout - p->getY()) <= 1)
 				return (false);
-		} else if (p->canMove(x_scout, y_scout))
+		} else if (p->canMove(x_scout, y_scout, piece))
 			return (false);
 	}
 	return (true);
