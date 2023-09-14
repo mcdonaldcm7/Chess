@@ -10,9 +10,14 @@ SDL_Window* window;
 SDL_Renderer* window_renderer;
 ChessBoard* board;
 bool quit;
-bool black_turn;
 Piece* active_piece;
 
+/**
+ * start - Starts the game handling window initialization and making
+ * appropriate call to event handlers
+ *
+ * Return: Nothing
+ */
 void start(void)
 {
 	if (init())
@@ -35,7 +40,7 @@ void start(void)
 		}
 		board = new ChessBoard(window_renderer, BOARD_SIZE);
 		active_piece = nullptr;
-		quit = black_turn = false;
+		quit = false;
 
 		board->drawBoard();
 		while (!quit)
@@ -49,6 +54,14 @@ void start(void)
 	wrapUp();
 }
 
+/**
+ * eventHandler - Handles the game events
+ *
+ * @event: SDL_Event pointer to use to handle the type of event that was
+ * invoked
+ *
+ * Return: Nothing
+ */
 void eventHandler(SDL_Event* event)
 {
 	switch (event->type)
@@ -61,52 +74,54 @@ void eventHandler(SDL_Event* event)
 			int y = event->button.y;
 			int pad = board->getBoardPad();
 			Piece* clicked_piece;
+
 			if ((x > pad) && (x <= (BOARD_SIZE - pad)) &&
 					(y > pad) && (y <= (BOARD_SIZE - pad)))
 			{
 				int grid_x_pos = (int) floor((x - pad) / board->getGridSize());
 				int grid_y_pos = (int) floor((y - pad) / board->getGridSize());
 				clicked_piece = board->getPiece(grid_x_pos, grid_y_pos);
+
 				if (clicked_piece == nullptr)
 				{
-					if (active_piece != nullptr)
+					if (active_piece != nullptr && board->isPieceTurn(active_piece))
 					{
-						if (isPieceTurn(active_piece) && active_piece->canMove(grid_x_pos, grid_y_pos))
+						if (active_piece->canMove(grid_x_pos, grid_y_pos))
 						{
 							board->setLastMove(active_piece->getX(), grid_x_pos,
-									active_piece->getY(), grid_y_pos, 
+									active_piece->getY(), grid_y_pos,
 									active_piece->getPieceType());
 							board->movePiece(active_piece, grid_x_pos, grid_y_pos);
 							active_piece = nullptr;
-							black_turn = !black_turn;
+							board->flipTurn();
 						}
 					}
 				} else
 				{
 					if (active_piece == nullptr)
 					{
-						if (isPieceTurn(clicked_piece))
+						if (board->isPieceTurn(clicked_piece))
 						{
 							active_piece = clicked_piece;
-							board->highlightSquare(grid_x_pos, grid_y_pos);
+							board->highlight(grid_x_pos, grid_y_pos, PIECE);
 							board->highlightRoute(active_piece);
 						}
-					} else 
+					} else
 					{
 						if (clicked_piece == active_piece)
 						{
 							active_piece = nullptr;
 							board->drawBoard();
-						} else 
+						} else
 						{
 							if (active_piece->canMove(grid_x_pos, grid_y_pos))
 							{
 								board->setLastMove(active_piece->getX(), grid_x_pos,
-										active_piece->getY(), grid_y_pos, 
+										active_piece->getY(), grid_y_pos,
 										active_piece->getPieceType());
 								board->movePiece(active_piece, grid_x_pos, grid_y_pos);
 								active_piece = nullptr;
-								black_turn = !black_turn;
+								board->flipTurn();
 							}
 						}
 					}
@@ -117,14 +132,4 @@ void eventHandler(SDL_Event* event)
 				// Such as the game menu, timer, etc.
 			}
 	}
-}
-
-/**
- * isPieceTurn - Returns whether or not it's a piece's turn
- *
- * Return: true if piece is black and it's black turn and vice versa
- */
-bool isPieceTurn(const Piece* piece)
-{
-	return ((piece->isBlack() && black_turn) || piece->isWhite() && !black_turn);
 }
