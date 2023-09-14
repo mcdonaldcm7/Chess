@@ -24,7 +24,7 @@ Queen::Queen(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* boa
  *
  * @x_dest: x-axis destination
  * @y_dest: y-axis destination
- * @prot: Piece to ignore when performing checks
+ * @nullptr: Piece to ignore when performing checks
  *
  * Return: true if requested move is valid, false otherwise
  */
@@ -39,7 +39,7 @@ bool Queen::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 		angle(x_dest, y_dest) == 45))
 	{
 		Piece* blocker;
-	       
+
 		blocker = m_board->routeBlocked(this, x_dest, y_dest);
 		if (!tmp || isOpponent(tmp) || (tmp == prot))
 		{
