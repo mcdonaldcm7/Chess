@@ -41,7 +41,7 @@ bool Bishop::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 
 		blocker = m_board->routeBlocked(this, x_dest, y_dest);
 
-		if (blocker)
+		if (blocker && (blocker != prot))
 			return (false);
 		if (!tmp || isOpponent(tmp) || (tmp == prot))
 			return (true);
