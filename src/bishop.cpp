@@ -25,7 +25,7 @@ Bishop::Bishop(int x, int y, bool isBlack, SDL_Renderer* renderer,
  *
  * @x_dest: x-axis destination
  * @y_dest: y-axis destination
- * @prot: Optional argument to help detect protected pieces
+ * @nullptr: Optional argument to help detect protected pieces
  *
  * Return: true if bishop can move to destination, Otherwise return false
  */
