@@ -35,7 +35,7 @@ bool Pawn::hasMoved(void) const
  *
  * @x_dest: x-axis destination
  * @y_dest: y-axis destination
- * @prot: Piece to ignore when performing checks
+ * @nullptr: Piece to ignore when performing checks
  *
  * Return: true if requested move is valid, false otherwise
  */
