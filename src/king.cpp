@@ -15,6 +15,8 @@ King::King(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* board
 				renderer);
 	}
 	m_has_moved = false;
+	m_on_check = false;
+	m_attacker = nullptr;
 }
 
 bool King::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
