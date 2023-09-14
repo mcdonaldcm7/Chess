@@ -23,7 +23,7 @@ Rook::Rook(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* board
  *
  * @x_dest: x-axis destination
  * @y_dest: y-axis destination
- * @prot: Piece to ignore when performing checks
+ * @nullptr: Piece to ignore when performing checks
  *
  * Return: true if requested move is valid, false otherwise
  */
