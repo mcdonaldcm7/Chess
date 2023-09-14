@@ -10,6 +10,7 @@ enum PieceType
 };
 
 class ChessBoard;
+class Grid;
 
 /*
  * class Piece - The base class for all chess pieces
@@ -44,6 +45,8 @@ class Piece {
 		bool isWhite(void) const { return (!is_black); };
 		bool isOpponent(const Piece*) const;
 		bool isCovered(void);
+		bool canAttack(Piece*);
+		Grid* interceptGrid(Piece*, Piece*);
 		bool operator==(const Piece*) const;
 		PieceType getPieceType(void) const { return (piece_type); };
 		SDL_Texture* getTexture(void) const { return (piece_texture); };
@@ -52,10 +55,16 @@ class Piece {
 class King : public Piece {
 	private:
 		bool m_has_moved;
+		bool m_on_check;
+		Piece* m_attacker;
 	public:
 		King(int, int, bool, SDL_Renderer*, ChessBoard*);
 		bool canMove(int, int, Piece*) override;
+		void setAttacker(Piece* piece) { m_attacker = piece; };
+		Piece* getAttacker(void) const { return (m_attacker); };
 		void moved(void) { m_has_moved = true; };
+		void setCheck(bool on_check) { m_on_check = on_check; };
+		bool onCheck(void) const { return (m_on_check); };
 		bool hasMoved(void) const { return (m_has_moved); };
 };
 
