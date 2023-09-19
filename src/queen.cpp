@@ -115,10 +115,9 @@ std::vector<Grid> Queen::interceptGrids(Piece* attacker, Piece* defender)
 
 		x_diff = abs(this->x - x_trv);
 		y_diff = abs(this->y - y_trv);
-		if (((abs(this->x - x_trv) == 0 && abs(this->y - y_trv) > 0) ||
-					(abs(this->x - x_trv) > 0 && abs(this->y - y_trv) == 0)) ||
-				((abs(this->x - x_trv) > 0 && abs(this->y - y_trv) > 0) &&
-				 angle(x_trv, y_trv) == 45))
+		if ((((x_diff == 0 && y_diff > 0) || (x_diff > 0 && y_diff == 0)) ||
+				((x_diff > 0 && y_diff > 0) && angle(x_trv, y_trv) == 45)) &&
+				canMove(x_trv, y_trv))
 			grids.push_back(Grid(x_trv, y_trv));
 	}
 
