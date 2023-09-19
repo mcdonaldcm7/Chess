@@ -44,7 +44,7 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
 			Rook* r;
 			int rook_x;
 
-			rook_x = right ? x + 1 : x - 2;
+			rook_x = right ? x + 2 : x - 1;
 			r = dynamic_cast<Rook*>(m_board[rook_x][y]);
 			r->setX(right ? prevX + 1 : prevX - 1);
 			m_board[rook_x][y] = nullptr;
@@ -78,23 +78,17 @@ void ChessBoard::movePiece(Piece* piece, int x, int y)
 			for (int i = 0; i < m_black_pieces.size(); i++)
 			{
 				if (tmp == m_black_pieces[i])
-				{
-					// std::cout << "Deleting " <<  *tmp << std::endl;
 					m_black_pieces.erase(m_black_pieces.begin() + i);
-				}
 			}
 		} else
 		{
 			for (int i = 0; i < m_white_pieces.size(); i++)
 			{
 				if (tmp == m_white_pieces[i])
-				{
-					// std::cout << "Deleting " << *tmp << std::endl;
 					m_white_pieces.erase(m_white_pieces.begin() + i);
-				}
 			}
 		}
-		
+
 		delete tmp;
 	}
 
@@ -224,8 +218,6 @@ Piece* ChessBoard::routeBlocked(Piece* piece, int x_dest, int y_dest)
 				tmp = trackDiagonal(piece, x_dest, y_dest);
 			else
 				tmp = trackStraight(piece, x_dest, y_dest);
-			break;
-		case KING:
 			break;
 		default:
 			break;
