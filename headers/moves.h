@@ -1,7 +1,10 @@
 #ifndef MOVES_H_
 #define MOVES_H_
 
-#include "pieces.h"
+enum PieceType
+{
+	KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN, NONE
+};
 
 /**
  * Move - Defines a move made by a player
@@ -19,16 +22,41 @@ private:
 
 public:
 	Move();
-	int fromX(void) const { return (from_x); };
-	int fromY(void) const { return (from_y); };
-	int toX(void) const { return (to_x); };
-	int toY(void) const { return (to_y); };
-	PieceType getPieceType(void) const { return (piece_type); };
+
+	int fromX(void) const
+	{
+		return (from_x);
+	};
+
+	int fromY(void) const
+	{
+		return (from_y);
+	};
+
+	int toX(void) const
+	{
+		return (to_x);
+	};
+
+	int toY(void) const
+	{
+		return (to_y);
+	};
+
+	PieceType getPieceType(void) const
+	{
+		return (piece_type);
+	};
+
 	void setFromX(int);
 	void setFromY(int);
 	void setToX(int);
 	void setToY(int);
-	void setPieceType(PieceType pt) { this->piece_type = pt; };
+
+	void setPieceType(PieceType pt)
+	{
+		this->piece_type = pt;
+	};
 };
 
 /**
@@ -42,13 +70,26 @@ private:
 	int x, y;
 
 public:
-	Grid (int x_pos, int y_pos) : x(x_pos), y(y_pos) {};
-	int getX(void) const { return (x); };
-	int getY(void) const { return (y); };
-	void setX(int x) { this->x = x; };
-	void setY(int y) { this->y = y; };
-};
+	Grid() : x(-1), y(-1) {};
+	Grid(int x_pos, int y_pos) : x(x_pos), y(y_pos) {};
+	int getX(void) const
+	{
+		return (x);
+	};
 
-Grid* straightIntercept(Piece*, Piece*, Piece*);
-Grid* diagonalIntercept(Piece*, Piece*, Piece*);
+	int getY(void) const
+	{
+		return (y);
+	};
+
+	void setX(int x)
+	{
+		this->x = x;
+	};
+
+	void setY(int y)
+	{
+		this->y = y;
+	};
+};
 #endif
