@@ -86,7 +86,10 @@ void eventHandler(SDL_Event* event)
 				{
 					if (active_piece != nullptr && board->isPieceTurn(active_piece))
 					{
-						if (active_piece->canMove(grid_x_pos, grid_y_pos))
+						if ((!board->underCheck(active_piece) &&
+								active_piece->canMove(grid_x_pos, grid_y_pos)
+								&& !board->isPiecePinned(active_piece)) ||
+								board->isIntercept(active_piece, grid_x_pos, grid_y_pos))
 						{
 							board->setLastMove(active_piece->getX(), grid_x_pos,
 									active_piece->getY(), grid_y_pos,
@@ -94,6 +97,8 @@ void eventHandler(SDL_Event* event)
 							board->movePiece(active_piece, grid_x_pos, grid_y_pos);
 							active_piece = nullptr;
 							board->flipTurn();
+							board->check(nullptr);
+							board->updatePieceIntercept();
 						}
 					}
 				} else
@@ -104,7 +109,19 @@ void eventHandler(SDL_Event* event)
 						{
 							active_piece = clicked_piece;
 							board->highlight(grid_x_pos, grid_y_pos, PIECE);
-							board->highlightRoute(active_piece);
+							if (!board->underCheck(active_piece))
+							{
+								if (!board->isPiecePinned(active_piece))
+									board->highlightRoute(active_piece);
+								else
+									board->highlightRoute(active_piece, true);
+							} else
+							{
+								if (active_piece->getPieceType() == KING)
+									board->highlightKingEvade();
+								else
+									board->highlightInterceptRoute(active_piece);
+							}
 						}
 					} else
 					{
@@ -114,7 +131,10 @@ void eventHandler(SDL_Event* event)
 							board->drawBoard();
 						} else
 						{
-							if (active_piece->canMove(grid_x_pos, grid_y_pos))
+							if ((!board->underCheck(active_piece) &&
+									active_piece->canMove(grid_x_pos, grid_y_pos)
+									&& !board->isPiecePinned(active_piece)) ||
+									board->isIntercept(active_piece, grid_x_pos, grid_y_pos))
 							{
 								board->setLastMove(active_piece->getX(), grid_x_pos,
 										active_piece->getY(), grid_y_pos,
@@ -122,6 +142,8 @@ void eventHandler(SDL_Event* event)
 								board->movePiece(active_piece, grid_x_pos, grid_y_pos);
 								active_piece = nullptr;
 								board->flipTurn();
+								board->check(nullptr);
+								board->updatePieceIntercept();
 							}
 						}
 					}
