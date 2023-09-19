@@ -35,11 +35,11 @@ bool Pawn::hasMoved(void) const
  *
  * @x_dest: x-axis destination
  * @y_dest: y-axis destination
- * @nullptr: Piece to ignore when performing checks
+ * @prot: Piece to ignore when performing checks
  *
  * Return: true if requested move is valid, false otherwise
  */
-bool Pawn::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
+bool Pawn::canMove(int x_dest, int y_dest, Piece* prot)
 {
 	// Pawns can move up to two squares forward on their first move and
 	// only one square forward afterwards. They may also capture one square
@@ -88,7 +88,95 @@ bool Pawn::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 	{
 		Piece* side_piece = m_board->getPiece(x_dest, y);
 		if(side_piece != nullptr)
-			return (isOpponent(side_piece) && side_piece->getPieceType() == PAWN);
+			return (isOpponent(side_piece) &&
+					side_piece->getPieceType() == PAWN);
 	}
 	return (false);
+}
+
+/**
+ * interceptGrid - Finds and return the intercept grid in the route from the
+ * attacker to the defender (typically the king)
+ *
+ * @attacker: Pointer to the attacking piece
+ * @defender: Pointer to the defending piece
+ *
+ * Return: Grid object that points to the intercepting grid
+ */
+Grid Pawn::interceptGrid(Piece* attacker, Piece* defender)
+{
+	bool isStraight;
+	int att_x, att_y, def_x, def_y;
+	int x_incr, y_incr, x_trv, y_trv;
+
+	if (!attacker || !defender)
+		return (Grid(-1, -1));
+	att_x = attacker->getX();
+	att_y = attacker->getY();
+	def_x = defender->getX();
+	def_y = defender->getY();
+
+	isStraight = ((att_x - def_x) == 0) || ((att_y - def_y) == 0);
+
+	if (isStraight)
+	{
+		bool y_in_bound, x_in_bound, is_forward;
+
+		// Only consider square ahead of pawn position
+		is_forward = isBlack() && (att_y < this->y) ||
+			isWhite() && (att_y > this->y);
+
+		// Checks if y position of the attacker isn't beyond reach
+		y_in_bound = (abs(this->y - att_y) == 1) ||
+			((abs(this->y - att_y) == 2) && !hasMoved());
+
+		// Checks if x position is between that of the attacker and the
+		// defender
+		x_in_bound = (att_x < this->x && this->x < def_x) ||
+			(def_x < this->x && this->x < att_x);
+
+		if (is_forward && ((att_y - def_y) == 0) && x_in_bound && y_in_bound)
+			return (Grid(this->x, att_y));
+	}
+
+	x_incr = (att_x < def_x) ? 1 : -1;
+	y_incr = (att_y < def_y) ? 1 : -1;
+	x_trv = y_trv = -1;
+
+	for (x_trv = att_x, y_trv = att_y;
+			x_trv != def_x && y_trv != def_y;
+			x_trv += x_incr, y_trv += y_incr)
+	{
+		if (x_trv == this->x)
+		{
+			if (isBlack())
+			{
+				if (this->y - y_trv == 1)
+				{
+					if (!m_board->getPiece(x_trv, y_trv))
+						return (Grid(x_trv, y_trv));
+				} else if (this->y - y_trv == 2 && !hasMoved())
+				{
+					if (!m_board->getPiece(x_trv, y_trv) &&
+							!m_board->getPiece(x_trv, y_trv + 1))
+						return (Grid(x_trv, y_trv));
+				}
+			} else
+			{
+				if (y_trv - this->y == 1)
+				{
+					if (!m_board->getPiece(x_trv, y_trv))
+						return (Grid(x_trv, y_trv));
+				} else if (y_trv - this->y == 2 && !hasMoved())
+				{
+					if (!m_board->getPiece(x_trv, y_trv) &&
+							!m_board->getPiece(x_trv, y_trv - 1))
+						return (Grid(x_trv, y_trv));
+				}
+			}
+		}
+
+	}
+
+	return (Grid(-1, -1));
 }
