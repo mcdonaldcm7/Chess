@@ -1,10 +1,21 @@
 #include "../headers/game.h"
+#include "../headers/pieces.h"
 
+/**
+ * highlightKingRoutes - Renders the appropriate highlight for the selected
+ * king piece
+ *
+ * @p: Pointer to the selected king piece
+ *
+ * Return: Nothing
+ */
 void ChessBoard::highlightKingRoutes(Piece* p)
 {
 	Piece* tmp;
 	int x, y;
 
+	if (!p)
+		return;
 	x = p->getX();
 	y = p->getY();
 
@@ -127,14 +138,14 @@ void ChessBoard::highlightKingRoutes(Piece* p)
 		{
 			tmp_r = dynamic_cast<Rook*>(tmp);
 			if (!tmp_r->hasMoved())
-				highlight(6, y, CASTLING);
+				highlight(5, y, CASTLING);
 		}
 
 		if (!trackStraight(p, 0, y) && tmp2->getPieceType() == ROOK)
 		{
 			tmp_r = dynamic_cast<Rook*>(tmp2);
 			if (!tmp_r->hasMoved())
-				highlight(2, y, CASTLING);
+				highlight(1, y, CASTLING);
 		}
 	}
 }
@@ -153,6 +164,8 @@ void ChessBoard::highlightPawnRoutes(Piece* p)
 	Piece* tmp_piece1, *tmp_piece2;
 	int x, y;
 
+	if (!p)
+		return;
 	x = p->getX();
 	y = p->getY();
 	// Using dynamic_cast to perform polymorphic cast
@@ -223,13 +236,17 @@ void ChessBoard::highlightPawnRoutes(Piece* p)
  * knight piece
  *
  * @p: Pointer to the selected knight piece
+ * @pinned: Boolean parameter indicating whether or not the piece is pinned
  *
  * Return: Nothing
  */
-void ChessBoard::highlightKnightRoutes(Piece* p)
+void ChessBoard::highlightKnightRoutes(Piece* p, bool pinned)
 {
 	int x, y;
+	bool valid;
 
+	if (!p)
+		return;
 	x = p->getX();
 	y = p->getY();
 	// Highlights Top-Right square
@@ -238,12 +255,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		Piece* piece;
 
 		piece = m_board[x + 1][y + 2];
-		if (piece)
+		valid = !pinned || (pinned && !moveCatastrophy(p, x + 1, y + 2));
+
+		if (valid)
 		{
-			if (p->isOpponent(piece))
-				highlight(x + 1, y + 2, CAPTURE);
-		} else
-			highlight(x + 1, y + 2, MOVE);
+			if (piece)
+			{
+				if (p->isOpponent(piece))
+					highlight(x + 1, y + 2, CAPTURE);
+			} else
+				highlight(x + 1, y + 2, MOVE);
+		}
 	}
 
 	// Highlights Top-Left square
@@ -252,12 +274,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		Piece* piece;
 
 		piece = m_board[x - 1][y + 2];
-		if (piece)
+		valid = !pinned || (pinned && !moveCatastrophy(p, x - 1, y + 2));
+
+		if (valid)
 		{
-			if (p->isOpponent(piece))
-				highlight(x - 1, y + 2, CAPTURE);
-		} else
-			highlight(x - 1, y + 2, MOVE);
+			if (piece)
+			{
+				if (p->isOpponent(piece))
+					highlight(x - 1, y + 2, CAPTURE);
+			} else
+				highlight(x - 1, y + 2, MOVE);
+		}
 	}
 
 	// Highlights Bottom-Right square
@@ -266,12 +293,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		Piece* piece;
 
 		piece = m_board[x + 1][y - 2];
-		if (piece)
+		valid = !pinned || (pinned && !moveCatastrophy(p, x + 1, y - 2));
+
+		if (valid)
 		{
-			if (p->isOpponent(piece))
-				highlight(x + 1, y - 2, CAPTURE);
-		} else
-			highlight(x + 1, y - 2, MOVE);
+			if (piece)
+			{
+				if (p->isOpponent(piece))
+					highlight(x + 1, y - 2, CAPTURE);
+			} else
+				highlight(x + 1, y - 2, MOVE);
+		}
 	}
 
 	// Highlights Bottom-Left square
@@ -280,12 +312,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		Piece* piece;
 
 		piece = m_board[x - 1][y - 2];
-		if (piece)
+		valid = !pinned || (pinned && !moveCatastrophy(p, x - 1, y - 2));
+
+		if (valid)
 		{
-			if (p->isOpponent(piece))
-				highlight(x - 1, y - 2, CAPTURE);
-		} else
-			highlight(x - 1, y - 2, MOVE);
+			if (piece)
+			{
+				if (p->isOpponent(piece))
+					highlight(x - 1, y - 2, CAPTURE);
+			} else
+				highlight(x - 1, y - 2, MOVE);
+		}
 	}
 
 	// Highlights Right-Top square
@@ -294,12 +331,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		Piece* piece;
 
 		piece = m_board[x + 2][y + 1];
-		if (piece)
+		valid = !pinned || (pinned && !moveCatastrophy(p, x + 2, y + 1));
+
+		if (valid)
 		{
-			if (p->isOpponent(piece))
-				highlight(x + 2, y + 1, CAPTURE);
-		} else
-			highlight(x + 2, y + 1, MOVE);
+			if (piece)
+			{
+				if (p->isOpponent(piece))
+					highlight(x + 2, y + 1, CAPTURE);
+			} else
+				highlight(x + 2, y + 1, MOVE);
+		}
 	}
 
 	// Highlights Right-Bottom square
@@ -308,12 +350,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		Piece* piece;
 
 		piece = m_board[x + 2][y - 1];
-		if (piece)
+		valid = !pinned || (pinned && !moveCatastrophy(p, x + 2, y - 1));
+
+		if (valid)
 		{
-			if (p->isOpponent(piece))
-				highlight(x + 2, y - 1, CAPTURE);
-		} else
-			highlight(x + 2, y - 1, MOVE);
+			if (piece)
+			{
+				if (p->isOpponent(piece))
+					highlight(x + 2, y - 1, CAPTURE);
+			} else
+				highlight(x + 2, y - 1, MOVE);
+		}
 	}
 
 	// Highlights Left-Top square
@@ -322,12 +369,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		Piece* piece;
 
 		piece = m_board[x - 2][y + 1];
-		if (piece)
+		valid = !pinned || (pinned && !moveCatastrophy(p, x - 2, y + 1));
+
+		if (valid)
 		{
-			if (p->isOpponent(piece))
-				highlight(x - 2, y + 1, CAPTURE);
-		} else
-			highlight(x - 2, y + 1, MOVE);
+			if (piece)
+			{
+				if (p->isOpponent(piece))
+					highlight(x - 2, y + 1, CAPTURE);
+			} else
+				highlight(x - 2, y + 1, MOVE);
+		}
 	}
 
 	// Highlights Left-Bottom square
@@ -336,12 +388,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
 		Piece* piece;
 
 		piece = m_board[x - 2][y - 1];
-		if (piece)
+		valid = !pinned || (pinned && !moveCatastrophy(p, x - 2, y - 1));
+
+		if (valid)
 		{
-			if (p->isOpponent(piece))
-				highlight(x - 2, y - 1, CAPTURE);
-		} else
-			highlight(x - 2, y - 1, MOVE);
+			if (piece)
+			{
+				if (p->isOpponent(piece))
+					highlight(x - 2, y - 1, CAPTURE);
+			} else
+				highlight(x - 2, y - 1, MOVE);
+		}
 	}
 }
 
@@ -352,14 +409,17 @@ void ChessBoard::highlightKnightRoutes(Piece* p)
  * encountererd
  *
  * @p: Pointer to the selected piece
+ * @pinned: Boolean parameter indicating whether or not the piece is pinned
  *
  * Return: Nothing
  */
-void ChessBoard::highlightStraight(Piece *p)
+void ChessBoard::highlightStraight(Piece *p, bool pinned)
 {
 	int x, y;
-	bool upper_blk, lower_blk, right_blk, left_blk;
+	bool upper_blk, lower_blk, right_blk, left_blk, valid;
 
+	if (!p)
+		return;
 	x = p->getX();
 	y = p->getY();
 	upper_blk = lower_blk = right_blk = left_blk = false;
@@ -370,53 +430,69 @@ void ChessBoard::highlightStraight(Piece *p)
 		tmp = nullptr;
 		if (!upper_blk && (y + y_adv) <= 7)
 		{
+			valid = !pinned || (pinned && !moveCatastrophy(p, x, y + y_adv));
 			tmp = m_board[x][y + y_adv];
-			if (!tmp)
-				highlight(x, y + y_adv, MOVE);
-			else
+			if (valid)
 			{
-				if (p->isOpponent(tmp))
-					highlight(x, y + y_adv, CAPTURE);
-				upper_blk = true;
+				if (!tmp)
+					highlight(x, y + y_adv, MOVE);
+				else
+				{
+					if (p->isOpponent(tmp))
+						highlight(x, y + y_adv, CAPTURE);
+					upper_blk = true;
+				}
 			}
 		}
 
 		if (!lower_blk && (y - y_adv) >= 0)
 		{
+			valid = !pinned || (pinned && !moveCatastrophy(p, x, y - y_adv));
 			tmp = m_board[x][y - y_adv];
-			if (!tmp)
-				highlight(x, y - y_adv, MOVE);
-			else
+			if (valid)
 			{
-				if (p->isOpponent(tmp))
-					highlight(x, y - y_adv, CAPTURE);
-				lower_blk = true;
+				if (!tmp)
+					highlight(x, y - y_adv, MOVE);
+				else
+				{
+					if (p->isOpponent(tmp))
+						highlight(x, y - y_adv, CAPTURE);
+					lower_blk = true;
+				}
 			}
 		}
 
 		if (!right_blk && (x + x_adv) <= 7)
 		{
+			valid = !pinned || (pinned && !moveCatastrophy(p, x + x_adv, y));
 			tmp = m_board[x + x_adv][y];
-			if (!tmp)
-				highlight(x + x_adv, y, MOVE);
-			else
+			if (valid)
 			{
-				if (p->isOpponent(tmp))
-					highlight(x + x_adv, y, CAPTURE);
-				right_blk = true;
+				if (!tmp)
+					highlight(x + x_adv, y, MOVE);
+				else
+				{
+					if (p->isOpponent(tmp))
+						highlight(x + x_adv, y, CAPTURE);
+					right_blk = true;
+				}
 			}
 		}
 
 		if (!left_blk && (x - x_adv) >= 0)
 		{
+			valid = !pinned || (pinned && !moveCatastrophy(p, x - x_adv, y));
 			tmp = m_board[x - x_adv][y];
-			if (!tmp)
-				highlight(x - x_adv, y, MOVE);
-			else
+			if (valid)
 			{
-				if (p->isOpponent(tmp))
-					highlight(x - x_adv, y, CAPTURE);
-				left_blk = true;
+				if (!tmp)
+					highlight(x - x_adv, y, MOVE);
+				else
+				{
+					if (p->isOpponent(tmp))
+						highlight(x - x_adv, y, CAPTURE);
+					left_blk = true;
+				}
 			}
 		}
 	}
@@ -429,14 +505,17 @@ void ChessBoard::highlightStraight(Piece *p)
  * obstructing piece is encountererd
  *
  * @p: Pointer to the selected piece
+ * @pinned: Boolean parameter indicating whether or not the piece is pinned
  *
  * Return: Nothing
  */
-void ChessBoard::highlightDiagonal(Piece* p)
+void ChessBoard::highlightDiagonal(Piece* p, bool pinned)
 {
 	int x, y;
-	bool ul_blocked, ur_blocked, ll_blocked, lr_blocked;
+	bool ul_blocked, ur_blocked, ll_blocked, lr_blocked, valid;
 
+	if (!p)
+		return;
 	x = p->getX();
 	y = p->getY();
 	ul_blocked = ur_blocked = ll_blocked = lr_blocked = false;
@@ -449,27 +528,35 @@ void ChessBoard::highlightDiagonal(Piece* p)
 		{
 			if (!ur_blocked && (y + y_adv) <= 7)
 			{
+				valid = !pinned || (pinned && !moveCatastrophy(p, x + x_adv, y + y_adv));
 				tmp = m_board[x + x_adv][y + y_adv];
-				if (!tmp)
-					highlight(x + x_adv, y + y_adv, MOVE);
-				else
+				if (valid)
 				{
-					if (p->isOpponent(tmp))
-						highlight(x + x_adv, y + y_adv, CAPTURE);
-					ur_blocked = true;
+					if (!tmp)
+							highlight(x + x_adv, y + y_adv, MOVE);
+					else
+					{
+						if (p->isOpponent(tmp))
+								highlight(x + x_adv, y + y_adv, CAPTURE);
+						ur_blocked = true;
+					}
 				}
 			}
 
 			if (!lr_blocked && (y - y_adv) >= 0)
 			{
+				valid = !pinned || (pinned && !moveCatastrophy(p, x + x_adv, y - y_adv));
 				tmp = m_board[x + x_adv][y - y_adv];
-				if (!tmp)
-					highlight(x + x_adv, y - y_adv, MOVE);
-				else
+				if (valid)
 				{
-					if (p->isOpponent(tmp))
-						highlight(x + x_adv, y - y_adv, CAPTURE);
-					lr_blocked = true;
+					if (!tmp)
+							highlight(x + x_adv, y - y_adv, MOVE);
+					else
+					{
+						if (p->isOpponent(tmp))
+								highlight(x + x_adv, y - y_adv, CAPTURE);
+						lr_blocked = true;
+					}
 				}
 			}
 		}
@@ -478,27 +565,35 @@ void ChessBoard::highlightDiagonal(Piece* p)
 		{
 			if (!ul_blocked && (y + y_adv) <= 7)
 			{
+				valid = !pinned || (pinned && !moveCatastrophy(p, x - x_adv, y + y_adv));
 				tmp = m_board[x - x_adv][y + y_adv];
-				if (!tmp)
-					highlight(x - x_adv, y + y_adv, MOVE);
-				else
+				if (valid)
 				{
-					if (p->isOpponent(tmp))
-						highlight(x - x_adv, y + y_adv, CAPTURE);
-					ul_blocked = true;
+					if (!tmp)
+							highlight(x - x_adv, y + y_adv, MOVE);
+					else
+					{
+						if (p->isOpponent(tmp))
+								highlight(x - x_adv, y + y_adv, CAPTURE);
+						ul_blocked = true;
+					}
 				}
 			}
 
 			if (!ll_blocked && (y - y_adv) >= 0)
 			{
+				valid = !pinned || (pinned && !moveCatastrophy(p, x - x_adv, y - y_adv));
 				tmp = m_board[x - x_adv][y - y_adv];
-				if (!tmp)
-					highlight(x - x_adv, y - y_adv, MOVE);
-				else
+				if (valid)
 				{
-					if (p->isOpponent(tmp))
-						highlight(x - x_adv, y - y_adv, CAPTURE);
-					ll_blocked = true;
+					if (!tmp)
+							highlight(x - x_adv, y - y_adv, MOVE);
+					else
+					{
+						if (p->isOpponent(tmp))
+								highlight(x - x_adv, y - y_adv, CAPTURE);
+						ll_blocked = true;
+					}
 				}
 			}
 		}
