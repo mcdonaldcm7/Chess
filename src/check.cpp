@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream& os, const Piece& piece) {
  *
  * Return: true if the grid (x_scout, y_scout) is safe, false Otherwise
  */
-bool ChessBoard::isSafe(Piece* piece, int x_scout, int y_scout)
+bool ChessBoard::isSafe(Piece *piece, int x_scout, int y_scout)
 {
 	std::vector<Piece*> foes;
 
@@ -62,11 +62,14 @@ bool ChessBoard::isSafe(Piece* piece, int x_scout, int y_scout)
 }
 
 /**
- * kingOnCheck - Checks if the king of the piece whoose turn it is, is on check
+ * check - Updates the check and attacker member variables of the king whoose
+ * color's turn it is
+ *
+ * @ignore: Pieces to ignore when searching for threats
  *
  * Return: Nothing
  */
-void ChessBoard::check(void)
+void ChessBoard::check(Piece *ignore)
 {
 	int king_x, king_y;
 
@@ -77,11 +80,13 @@ void ChessBoard::check(void)
 
 		for (Piece* p : m_white_pieces)
 		{
-			if (p->canMove(king_x, king_y))
+			if (p->getPieceType() != KING &&
+					p != ignore &&
+					p->canMove(king_x, king_y))
 			{
 				m_black_king->setCheck(true);
 				m_black_king->setAttacker(p);
-				break;
+				return;
 			}
 		}
 
@@ -94,11 +99,13 @@ void ChessBoard::check(void)
 
 		for (Piece* p : m_black_pieces)
 		{
-			if (p->canMove(king_x, king_y))
+			if (p->getPieceType() != KING &&
+					p != ignore &&
+					p->canMove(king_x, king_y))
 			{
 				m_white_king->setCheck(true);
 				m_white_king->setAttacker(p);
-				break;
+				return;
 			}
 		}
 
@@ -115,7 +122,7 @@ void ChessBoard::check(void)
  *
  * Return: true is p's king is under check, false otherwise
  */
-bool ChessBoard::underCheck(Piece* p)
+bool ChessBoard::underCheck(Piece *p)
 {
 	if (!p)
 		return (false);
@@ -124,13 +131,41 @@ bool ChessBoard::underCheck(Piece* p)
 }
 
 /**
- * pieceKing - Gives the king for the specified piece based on color
+ * pieceKing - Return the king of the specified parameter piece
  *
- * @piece: Piece requesting king
+ * @piece: Piece whoose king is to be returned
  *
- * Return: Pointer to piece's king
+ * Return: Pointer to king for the specified piece
  */
-King* ChessBoard::pieceKing(Piece* piece)
+King* ChessBoard::pieceKing(Piece *piece)
 {
 	return (piece->isBlack() ? m_black_king : m_white_king);
+};
+
+/**
+ * isPiecePinned - Checks if a piece is pinned to it's position
+ *
+ * @piece: Piece to check
+ *
+ * Return: true if piece is pinned, false otherwise
+ */
+bool ChessBoard::isPiecePinned(Piece *piece)
+{
+	int piece_x, piece_y;
+	bool pinned;
+	King* king;
+
+	if (!piece || piece->getPieceType() == KING)
+		return (false);
+
+	piece_x = piece->getX();
+	piece_y = piece->getY();
+
+	m_board[piece_x][piece_y] = nullptr;
+	check();
+	pinned = underCheck(piece);
+	m_board[piece_x][piece_y] = piece;
+	check();
+
+	return (pinned);
 }
