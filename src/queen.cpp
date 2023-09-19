@@ -24,11 +24,11 @@ Queen::Queen(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* boa
  *
  * @x_dest: x-axis destination
  * @y_dest: y-axis destination
- * @nullptr: Piece to ignore when performing checks
+ * @prot: Piece to ignore when performing checks
  *
  * Return: true if requested move is valid, false otherwise
  */
-bool Queen::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
+bool Queen::canMove(int x_dest, int y_dest, Piece* prot)
 {
 	Piece *tmp;
 
@@ -70,4 +70,57 @@ int Queen::angle(int x_dest, int y_dest)
 	a = atan2(static_cast<float>(y_delta), static_cast<float>(x_delta)) *
 		180.0 / PI;
 	return ((int) a);
+}
+
+/**
+ * interceptGrids - Finds and return the intercept grid in the route from the
+ * attacker to the defender (typically the king)
+ *
+ * @attacker: Pointer to the attacking piece
+ * @defender: Pointer to the defending piece
+ *
+ * Return: vector of Grid object(s) that points to the intercepting grid(s)
+ */
+std::vector<Grid> Queen::interceptGrids(Piece* attacker, Piece* defender)
+{
+	std::vector<Grid> grids;
+	bool isStraight;
+	int att_x, att_y, def_x, def_y, x_incr, y_incr;
+
+	if (!attacker || !defender)
+		return (grids);
+	att_x = attacker->getX();
+	att_y = attacker->getY();
+	def_x = defender->getX();
+	def_y = defender->getY();
+
+	if (att_x < def_x)
+		x_incr = 1;
+	else if (att_x > def_x)
+		x_incr = -1;
+	else
+		x_incr = 0;
+
+	if (att_y < def_y)
+		y_incr = 1;
+	else if (att_y > def_y)
+		y_incr = -1;
+	else
+		y_incr = 0;
+
+	for (int x_trv = att_x, y_trv = att_y; (x_trv != def_x) ||
+			(y_trv != def_y); x_trv += x_incr, y_trv += y_incr)
+	{
+		int x_diff, y_diff;
+
+		x_diff = abs(this->x - x_trv);
+		y_diff = abs(this->y - y_trv);
+		if (((abs(this->x - x_trv) == 0 && abs(this->y - y_trv) > 0) ||
+					(abs(this->x - x_trv) > 0 && abs(this->y - y_trv) == 0)) ||
+				((abs(this->x - x_trv) > 0 && abs(this->y - y_trv) > 0) &&
+				 angle(x_trv, y_trv) == 45))
+			grids.push_back(Grid(x_trv, y_trv));
+	}
+
+	return (grids);
 }
