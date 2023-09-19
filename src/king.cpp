@@ -18,8 +18,17 @@ King::King(int x, int y, bool isBlack, SDL_Renderer* renderer, ChessBoard* board
 	m_on_check = false;
 	m_attacker = nullptr;
 }
-
-bool King::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
+/**
+ * canMove - Checks whether or not the king is allowed to move to the grid
+ * specified by (x_dest, y_dest)
+ *
+ * @x_dest: x-axis destination
+ * @y_dest: y-axis destination
+ * @prot: Piece to ignore when performing checks
+ *
+ * Return: true if requested move is valid, false otherwise
+ */
+bool King::canMove(int x_dest, int y_dest, Piece* prot)
 {
 	Piece* tmp;
 
@@ -44,17 +53,17 @@ bool King::canMove(int x_dest, int y_dest, Piece* prot = nullptr)
 		bool right;
 
 		right = x_dest > x;
-		if (right)
+		if (!right)
 		{
-			if (m_board->getPiece(x + 1, y) || m_board->getPiece(x + 2, y))
+			if (m_board->getPiece(x - 1, y) || m_board->getPiece(x - 2, y))
 				return (false);
 		} else
 		{
-			if (m_board->getPiece(x - 1, y) || m_board->getPiece(x - 2, y)
-					|| m_board->getPiece(x - 3, y))
+			if (m_board->getPiece(x + 1, y) || m_board->getPiece(x + 2, y)
+					|| m_board->getPiece(x + 3, y))
 				return (false);
 		}
-		p = m_board->getPiece(right ? x_dest + 1 : x_dest - 2, y);
+		p = m_board->getPiece(right ? x_dest + 2 : x_dest - 1, y);
 		if (p && p->getPieceType() == ROOK)
 		{
 			// Add threats check.
