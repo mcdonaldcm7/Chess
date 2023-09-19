@@ -52,17 +52,21 @@ void ChessBoard::highlight(int x, int y, HighlightType type)
 }
 
 /**
- * highlightRoute - Highlights the route of different squares a piece can move
+ * highlightRoute - Highlights the route of different grid(s) a piece can move
  * to on the board
  *
- * @p: Piece whoose routes should be highlighted
+ * @p: Pointer to the piece whoose route should be highlighted
+ * @pinned: Boolean parameter indicating whether or not the piece to highlight
+ * is pinned
  *
  * Return: Nothing
  */
-void ChessBoard::highlightRoute(Piece* p)
+void ChessBoard::highlightRoute(Piece* p, bool pinned)
 {
 	int x, y;
 
+	if (!p)
+		return;
 	x = p->getX();
 	y = p->getY();
 	switch(p->getPieceType())
@@ -71,22 +75,130 @@ void ChessBoard::highlightRoute(Piece* p)
 			highlightPawnRoutes(p);
 			break;
 		case KNIGHT:
-			highlightKnightRoutes(p);
+			highlightKnightRoutes(p, pinned);
 			break;
 		case BISHOP:
-			highlightDiagonal(p);
+			highlightDiagonal(p, pinned);
 			break;
 		case ROOK:
-			highlightStraight(p);
+			highlightStraight(p, pinned);
 			break;
 		case QUEEN:
-			highlightDiagonal(p);
-			highlightStraight(p);
+			highlightDiagonal(p, pinned);
+			highlightStraight(p, pinned);
 			break;
 		case KING:
 			highlightKingRoutes(p);
 			break;
 		default:
 			break;
+	}
+}
+
+/**
+ * highlightInterceptRoute - Highlights the possible intercept grid(s) if any
+ * for a piece to protect his king under check
+ *
+ * @p: Pointer to the piece whoose route should be highlighted
+ *
+ * Return: Nothing
+ */
+void ChessBoard::highlightInterceptRoute(Piece* p)
+{
+	King* king;
+	PieceType type;
+
+	if (!p)
+		return;
+
+	type = p->getPieceType();
+	if (type == KING)
+		return;
+
+	king = p->isBlack() ? m_black_king : m_white_king;
+	if (type == PAWN || type == ROOK)
+	{
+		Grid tmp;
+
+		if (type == PAWN)
+			tmp = dynamic_cast<Pawn*>(p)->getIntercept();
+		else
+			tmp = dynamic_cast<Rook*>(p)->getIntercept();
+
+		if (tmp.getX() >= 0 && tmp.getY() >= 0)
+			highlight(tmp.getX(), tmp.getY(), MOVE);
+	} else
+	{
+		std::vector<Grid> tmp_v;
+
+		switch (type)
+		{
+			case QUEEN:
+				tmp_v = dynamic_cast<Queen*>(p)->getIntercepts();
+				break;
+			case BISHOP:
+				tmp_v = dynamic_cast<Bishop*>(p)->getIntercepts();
+				break;
+			case KNIGHT:
+				tmp_v = dynamic_cast<Knight*>(p)->getIntercepts();
+				break;
+			default:
+				break;
+		}
+		for (int i = 0; i < tmp_v.size(); i++)
+			highlight(tmp_v[i].getX(), tmp_v[i].getY(), MOVE);
+	}
+}
+
+/**
+ * highlightKingEvade - Highlights squares a king can go to to evade a check
+ *
+ * Return: Nothing
+ */
+void ChessBoard::highlightKingEvade()
+{
+	int x, y;
+	King* king;
+	std::vector<Grid> safe_grids;
+
+	king = m_black_turn ? m_black_king : m_white_king;
+	if (!king->getAttacker())
+		return;
+	x = king->getX();
+	y = king->getY();
+	// Right
+	if (x <= 6 && king->canMove(x + 1, y))
+		safe_grids.push_back(Grid(x + 1, y));
+	// Left
+	if (x >= 1 && king->canMove(x - 1, y))
+		safe_grids.push_back(Grid(x - 1, y));
+	// Down
+	if (y >= 1 && king->canMove(x, y - 1))
+		safe_grids.push_back(Grid(x, y - 1));
+	// Up
+	if (y <= 6 && king->canMove(x, y + 1))
+		safe_grids.push_back(Grid(x, y + 1));
+	// Upper Right
+	if (y <= 6 && x <= 6 && king->canMove(x + 1, y + 1))
+		safe_grids.push_back(Grid(x + 1, y + 1));
+	// Upper Left
+	if (y <= 6 && x >= 1 && king->canMove(x - 1, y + 1))
+		safe_grids.push_back(Grid(x - 1, y + 1));
+	// Lower Right
+	if (y >= 1 && x <= 6 && king->canMove(x + 1, y - 1))
+		safe_grids.push_back(Grid(x + 1, y - 1));
+	// Lower Left
+	if (y >= 1 && x >= 1 && king->canMove(x - 1, y - 1))
+		safe_grids.push_back(Grid(x - 1, y - 1));
+	for (int i = 0; i < safe_grids.size(); i++)
+	{
+		int x, y;
+
+		x = safe_grids[i].getX();
+		y = safe_grids[i].getY();
+		if (m_board[x][y])
+			highlight(x, y, CAPTURE);
+		else
+			highlight(x, y, MOVE);
 	}
 }
