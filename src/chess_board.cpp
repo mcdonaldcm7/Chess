@@ -54,11 +54,11 @@ void ChessBoard::initBoard(void)
 	m_board[2][0] = new Bishop(2, 0, false, m_renderer, this);
 	m_board[5][0] = new Bishop(5, 0, false, m_renderer, this);
 
-	m_board[3][0] = new Queen(3, 0, false, m_renderer, this);
-	m_board[4][0] = new King(4, 0, false, m_renderer, this);
+	m_board[3][0] = new King(3, 0, false, m_renderer, this);
+	m_board[4][0] = new Queen(4, 0, false, m_renderer, this);
 
 	// Keeping a reference to the white king to be used for checks
-	m_white_king = dynamic_cast<King*>(m_board[4][0]);
+	m_white_king = dynamic_cast<King*>(m_board[3][0]);
 
 	m_white_pieces.push_back(m_board[0][0]);
 	m_white_pieces.push_back(m_board[7][0]);
@@ -79,11 +79,11 @@ void ChessBoard::initBoard(void)
 	m_board[2][7] = new Bishop(2, 7, true, m_renderer, this);
 	m_board[5][7] = new Bishop(5, 7, true, m_renderer, this);
 
-	m_board[3][7] = new Queen(3, 7, true, m_renderer, this);
-	m_board[4][7] = new King(4, 7, true, m_renderer, this);
+	m_board[3][7] = new King(3, 7, true, m_renderer, this);
+	m_board[4][7] = new Queen(4, 7, true, m_renderer, this);
 
 	// Keeping a reference to the black king to be used for checks
-	m_black_king = dynamic_cast<King*>(m_board[4][7]);
+	m_black_king = dynamic_cast<King*>(m_board[3][7]);
 
 	m_black_pieces.push_back(m_board[0][7]);
 	m_black_pieces.push_back(m_board[7][7]);
